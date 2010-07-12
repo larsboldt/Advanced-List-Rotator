@@ -55,7 +55,7 @@ var lbListRotatorClass = {
         c.settings = jQuery.extend({
                                     rotationInterval: 5000,
                                     effectTimer: 1000,
-                                    effect: 'fade',
+                                    effect: false,
                                     effectOptions: {},
                                     itemControl: {},
                                     shuffle: false,
@@ -72,7 +72,9 @@ var lbListRotatorClass = {
                                     previousItemElement: false,
                                     previousItemElementInteraction: 'click',
                                     randomEffect: false,
-                                    randomEffects: new Array('blind', 'clip', 'explode', 'fade', 'fold')
+                                    randomEffects: new Array('blind', 'clip', 'explode', 'fade', 'fold'),
+                                    debug: false,
+                                    debugLevel: new Array('debug', 'info', 'warn', 'error')
                                    }, c.settings, options);
         // Effect options
         c.effectOptions = jQuery.extend({}, c.effectOptions, c.settings.effectOptions);
@@ -89,8 +91,6 @@ var lbListRotatorClass = {
         c.currentItem = (c.settings.startIndex >= 0 && c.settings.startIndex < c.totalItems) ? c.settings.startIndex : 0;
         // Shuffle array
         c.shuffledItems = new Array();
-        // Add currentItem to shuffle list to avoid showing item twice the first round
-        c.shuffledItems.push(c.currentItem);
         // Timer
         c.tId = null;
         // User interaction
@@ -103,8 +103,19 @@ var lbListRotatorClass = {
         if (c.settings.randomStart) {
             c.currentItem = c.random(c.totalItems);
         }
+        // Add currentItem to shuffle list to avoid showing item twice the first round
+        c.shuffledItems.push(c.currentItem);
         // previousItem prevents shuffle ending and starting on the same item
         c.previousItem = c.currentItem;
+
+        // Debug?
+        if (c.settings.debug && c.in_array('debug', c.settings.debugLevel)) {
+            console.debug('init: totalItems: ' + c.totalItems);
+            console.debug('init: startIndex: ' + c.currentItem);
+            if (c.settings.shuffle) {
+                console.debug('init: Pushed ' + c.currentItem + ' into shufflelist');
+            }
+        }
 
         // Display first content
         c.$listRotator.children().each(function(index) {
@@ -276,7 +287,7 @@ var lbListRotatorClass = {
         // Check if user interacted with helper during effect duration
         if (! c.userInteraction) {
             // Make sure the element is hidden when effect is done, not all effects end with hide
-            if (h) {
+            if (h && c.getItemEffect(c)) {
                 e.hide();
             }
             // Remove active class on previous active item
@@ -322,7 +333,7 @@ var lbListRotatorClass = {
                     c.continueRotation(c, e, true);
                 }
             });
-        } else {
+        } else if (c.getItemEffect(c) == 'fade') {
             e.fadeOut(c.getItemEffectTimer(c), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
@@ -331,12 +342,23 @@ var lbListRotatorClass = {
                     c.continueRotation(c, e, true);
                 }
             });
+        } else {
+            // Animation done, reset animationRunning flag
+            c.animationRunning = false;
+            // Run callback?
+            if (runCallback) {
+                c.continueRotation(c, e, true);
+            }
         }
     },
 
     stopRotationEngine: function(c) {
         // Stop rotationEngine
         clearInterval(c.tId);
+        // Debug?
+        if (c.settings.debug && c.in_array('info', c.settings.debugLevel)) {
+            console.info('stopRotationEngine: Rotation Engine stopped');
+        }
     },
 
     startRotationEngine: function(c) {
@@ -345,6 +367,10 @@ var lbListRotatorClass = {
         // Start rotationEngine as long as disableRotationEngine is false
         if (! c.settings.disableRotationEngine) {
             c.tId = setInterval(function() {c.rotationEngine(c)}, c.getItemRotationInterval(c));
+            // Debug?
+            if (c.settings.debug && c.in_array('info', c.settings.debugLevel)) {
+                console.info('startRotationEngine: Rotation Engine started');
+            }
         }
     },
 
@@ -363,6 +389,13 @@ var lbListRotatorClass = {
         // Reset shuffle list if we've been through all the items
         if (c.shuffledItems.length == c.totalItems) {
             c.shuffledItems = new Array();
+        }
+        // Debug?
+        if (c.settings.debug && c.in_array('debug', c.settings.debugLevel)) {
+            console.debug('shuffleRotationEngine: Number ' + number + ' generated');
+            if (c.shuffledItems.length <= 0) {
+                console.debug('shuffleRotationEngine: Shufflelist was reset');
+            }
         }
         // Return generated number
         return number;

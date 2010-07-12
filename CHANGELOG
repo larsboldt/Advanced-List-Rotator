@@ -1,3 +1,8 @@
+1.3
+New:
+- Added randomEffect, randomEffects, itemControl
+- Default effect = none
+
 1.2
 New:
 - Added nextItemElement, nextItemElementInteraction, previousItemElement,
