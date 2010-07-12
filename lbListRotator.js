@@ -23,8 +23,8 @@ if (typeof Object.create !== 'function') {
 /* Advanced List Rotator
  * Copyright (c) 2010 Lars Boldt (larsboldt.com)
  * E-mail: boldt.lars@gmail.com
- * Version: 1.2
- * Released: 27.06.2010
+ * Version: 1.3
+ * Released: -
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
