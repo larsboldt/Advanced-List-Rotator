@@ -57,6 +57,7 @@ var lbListRotatorClass = {
                                     effectTimer: 1000,
                                     effect: 'fade',
                                     effectOptions: {},
+                                    itemControl: {},
                                     shuffle: false,
                                     randomStart: false,
                                     autoStart: true,
@@ -69,12 +70,15 @@ var lbListRotatorClass = {
                                     nextItemElement: false,
                                     nextItemElementInteraction: 'click',
                                     previousItemElement: false,
-                                    previousItemElementInteraction: 'click'
+                                    previousItemElementInteraction: 'click',
+                                    randomEffect: false,
+                                    randomEffects: new Array('blind', 'clip', 'explode', 'fade', 'fold')
                                    }, c.settings, options);
         // Effect options
-        c.effectOptions = jQuery.extend({
-                                         slideBy: 100
-                                        }, c.effectOptions, c.settings.effectOptions);
+        c.effectOptions = jQuery.extend({}, c.effectOptions, c.settings.effectOptions);
+
+        // Effect control
+        c.itemControl = jQuery.extend({}, c.itemControl, c.settings.itemControl);
 
         // Store element for reference, both normal and jQuery
         c.listRotator = element;
@@ -299,9 +303,9 @@ var lbListRotatorClass = {
         // Set animationRunning flag to true
         c.animationRunning = true;
         // Make sure jQuery UI is installed before running UI effects, if fade effect or UI isn't installed, run the standard fadeOut effect
-        if (c.settings.effect == 'slide') {
+        if (c.getItemEffect(c) == 'slide') {
             var pos = '-' + c.currentItem*c.effectOptions.slideBy;
-            c.$listRotator.animate({left: pos}, c.settings.effectTimer, 'swing', function() {
+            c.$listRotator.animate({left: pos}, c.getItemEffectTimer(c), 'swing', function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
@@ -309,8 +313,8 @@ var lbListRotatorClass = {
                     c.continueRotation(c, e, false);
                 }
             });
-        } else if (e.effect && c.settings.effect != 'fade') {
-            e.effect(c.settings.effect, c.effectOptions, c.settings.effectTimer, function() {
+        } else if (e.effect && c.getItemEffect(c) != 'fade') {
+            e.effect(c.getItemEffect(c), c.getItemEffectOptions(c), c.getItemEffectTimer(c), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
@@ -319,7 +323,7 @@ var lbListRotatorClass = {
                 }
             });
         } else {
-            e.fadeOut(c.settings.effectTimer, function() {
+            e.fadeOut(c.getItemEffectTimer(c), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
@@ -340,7 +344,7 @@ var lbListRotatorClass = {
         c.stopRotationEngine(c);
         // Start rotationEngine as long as disableRotationEngine is false
         if (! c.settings.disableRotationEngine) {
-            c.tId = setInterval(function() {c.rotationEngine(c)}, c.settings.rotationInterval);
+            c.tId = setInterval(function() {c.rotationEngine(c)}, c.getItemRotationInterval(c));
         }
     },
 
@@ -419,5 +423,43 @@ var lbListRotatorClass = {
             c.calculateNextItem = false;
             c.rotationEngine(c);
         }
+    },
+
+    getItemObj: function(c) {
+        var actualItem = (c.currentItem > 0) ? c.currentItem-1 : c.totalItems-1;
+        var obj = eval("c.itemControl.listIndex_"+actualItem);
+        return (typeof(obj) == 'undefined') ? false : obj;
+    },
+
+    getItemEffect: function(c) {
+        var obj = c.getItemObj(c);
+        if (obj !== false) {
+            return (typeof(obj.effect) == 'undefined') ? c.settings.effect : obj.effect;
+        }
+        return c.settings.effect;
+    },
+
+    getItemEffectTimer: function(c) {
+        var obj = c.getItemObj(c);
+        if (obj !== false) {
+            return (typeof(obj.effectTimer) == 'undefined') ? c.settings.effectTimer : obj.effectTimer;
+        }
+        return c.settings.effectTimer;
+    },
+
+    getItemEffectOptions: function(c) {
+        var obj = c.getItemObj(c);
+        if (obj !== false) {
+            return (typeof(obj.effectOptions) == 'undefined') ? c.effectOptions : jQuery.extend({}, c.effectOptions, obj.effectOptions);
+        }
+        return c.effectOptions;
+    },
+
+    getItemRotationInterval: function(c) {
+        var obj = c.getItemObj(c);
+        if (obj !== false) {
+            return (typeof(obj.rotationInterval) == 'undefined') ? c.settings.rotationInterval : obj.rotationInterval;
+        }
+        return c.settings.rotationInterval;
     }
 }
