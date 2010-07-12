@@ -1,0 +1,14 @@
+1.2
+New:
+- Added nextItemElement, nextItemElementInteraction, previousItemElement,
+  previousItemElementInteraction to manually move forward and backwards in
+  a list.
+
+Fixes:
+- Removed support for 'drop' effect because of IE problems. Possible fix for
+  this issue caused black borders around transparent pngs in IE which further
+  complicated fix. Removing support was best option for now. The original
+  problem seems to be that the drop effect removes the element from DOM
+  which IE is unable to restore on show(), the only way to restore it was to
+  add 100% opacity in addition to calling show(), but this caused the black
+  border problem.
