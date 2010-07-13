@@ -16,6 +16,13 @@ New:
 
 Changes:
 - Default effect was changed from fade to false (none).
+- Renamed class to AdvancedListRotatorClass
+- Renamed jQuery function to advListRotator
+- Renamed file to advListRotator
+- Renamed option listRotatorHelper to helper
+- Default value for option activeItemClass changed to alrActiveItem
+- Renamed option activeHelperItemClass to helperActiveItemClass
+- Default value for option helperActiveItemClass to alrHelperActiveItem
 
 Fixes:
 - Corrected a bug in the shuffle function which caused the first rotation to end

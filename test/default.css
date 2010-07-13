@@ -13,8 +13,8 @@ h1 {
     font-size: 22px;
     border-bottom: 1px solid #eaeaea;
 }
-#alr-test-basic li.lbListRotatorItemActive,
-#alr-test-randomstart-shuffle li.lbListRotatorItemActive {
+#alr-test-basic li.alrActiveItem,
+#alr-test-randomstart-shuffle li.alrActiveItem {
     color: #ff0000;
 }
 #alr-test-randomeffect {
@@ -24,6 +24,6 @@ h1 {
     position: absolute;
     display: none;
 }
-#alr-test-randomeffect li.lbListRotatorItemActive {
+#alr-test-randomeffect li.alrActiveItem {
     z-index: 1;
 }

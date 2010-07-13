@@ -7,12 +7,12 @@ if (typeof Object.create !== 'function') {
 }
 (function($){
     $.fn.extend({
-        lbListRotator: function(options) {
+        advListRotator: function(options) {
             if (this.length) {
                 return this.each(function() {
-                    var obj = Object.create(lbListRotatorClass);
+                    var obj = Object.create(AdvancedListRotatorClass);
                     obj.init(this, options);
-                    $.data(this, 'lbListRotator', lbListRotatorClass);
+                    $.data(this, 'advListRotator', AdvancedListRotatorClass);
                 });
             }
             return false;
@@ -47,7 +47,7 @@ if (typeof Object.create !== 'function') {
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-var lbListRotatorClass = {
+var AdvancedListRotatorClass = {
     init: function(element, options) {
         // Store "this" for reference
         var c = this;
@@ -62,9 +62,9 @@ var lbListRotatorClass = {
                                     randomStart: false,
                                     autoStart: true,
                                     disableRotationEngine: false,
-                                    listRotatorHelper: false,
-                                    activeItemClass: 'lbListRotatorItemActive',
-                                    activeHelperItemClass: 'lbListRotatorHelperItemActive',
+                                    helper: false,
+                                    activeItemClass: 'alrActiveItem',
+                                    helperActiveItemClass: 'alrHelperActiveItem',
                                     helperInteraction: 'mouseover',
                                     startIndex: 0,
                                     nextItemElement: false,
@@ -133,8 +133,8 @@ var lbListRotatorClass = {
         });
 
         // Loop all helper elements within the ul and bind mouseover/mouseout functionality to them
-        if (jQuery(c.settings.listRotatorHelper).length > 0) {
-            jQuery(c.settings.listRotatorHelper).children().each(function() {
+        if (jQuery(c.settings.helper).length > 0) {
+            jQuery(c.settings.helper).children().each(function() {
                 jQuery(this).bind(c.settings.helperInteraction, function() {
                     // Set userInteraction true
                     c.userInteraction = true;
@@ -146,7 +146,7 @@ var lbListRotatorClass = {
                     }
                     // Remove active class from helper
                     c.$listRotator.children().removeClass(c.settings.activeItemClass);
-                    jQuery(c.settings.listRotatorHelper).children().removeClass(c.settings.activeHelperItemClass);
+                    jQuery(c.settings.helper).children().removeClass(c.settings.helperActiveItemClass);
                     // Find position of current item
                     c.currentItem = jQuery(this).index();
                     // Show current content
@@ -427,16 +427,16 @@ var lbListRotatorClass = {
 
     setHelperClass: function(c, n, status) {
         // Make sure helper object is set
-        if (jQuery(c.settings.listRotatorHelper).length > 0) {
+        if (jQuery(c.settings.helper).length > 0) {
             // Loop childs of helper object
-            jQuery(c.settings.listRotatorHelper).children().each(function(index) {
+            jQuery(c.settings.helper).children().each(function(index) {
                 // Find the correct child
                 if (index == n) {
                     // Toggle class
                     if (status) {
-                        jQuery(this).addClass(c.settings.activeHelperItemClass);
+                        jQuery(this).addClass(c.settings.helperActiveItemClass);
                     } else {
-                        jQuery(this).removeClass(c.settings.activeHelperItemClass);
+                        jQuery(this).removeClass(c.settings.helperActiveItemClass);
                     }
                     return false;
                 }
