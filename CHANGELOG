@@ -1,7 +1,25 @@
 1.3
 New:
-- Added randomEffect, randomEffects, itemControl
-- Default effect = none
+- Added itemControl which allows you to specify effects, timers and other
+  options on an per item basis.
+- Added randomEffect, randomEffects, itemControl randomEffect,
+  itemControl randomEffects. You can use randomEffect to get random effects on
+  each rotation. Control which effects you want with the randomEffects array.
+  randomEffect and randomEffects can also be specified on an per item basis
+  using the new itemControl system, which allows for very fine-tuned item
+  control.
+- Added new effect, none (false), which allows pure CSS effects on items.
+- Added debug and debugLevel, debug will output various debug data to the
+  firebug console while with debugLevel you can control what type of debug
+  data you want in the console.
+- Added a test-suite to easier spot bugs during development.
+
+Changes:
+- Default effect was changed from fade to false (none).
+
+Fixes:
+- Corrected a bug in the shuffle function which caused the first rotation to end
+  prematurely.
 
 1.2
 New:

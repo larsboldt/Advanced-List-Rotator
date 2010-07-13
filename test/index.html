@@ -5,15 +5,17 @@
         <title>Advanced List Rotator - Test Suite</title>
         <link href="default.css" type="text/css" rel="stylesheet" />
         <script src="jquery-1.4.2.min.js" type="text/javascript"></script>
+        <script src="jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script>
         <script src="../lbListRotator.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('#alr-test-basic').lbListRotator();
                 $('#alr-test-randomstart-shuffle').lbListRotator({
                     randomStart: true,
-                    shuffle: true,
-                    debug: false,
-                    debugLevel: new Array('debug')
+                    shuffle: true
+                });
+                $('#alr-test-randomeffect').lbListRotator({
+                    randomEffect: true
                 });
             });
         </script>
@@ -31,6 +33,15 @@
         <h1>Advanced List Rotator Test - Random start / Shuffle</h1>
         <p>Expected result: Shuffled rotation with random start, standard css class applied to active element</p>
         <ul id="alr-test-randomstart-shuffle">
+            <li>ListItem 1</li>
+            <li>ListItem 2</li>
+            <li>ListItem 3</li>
+            <li>ListItem 4</li>
+            <li>ListItem 5</li>
+        </ul>
+        <h1>Advanced List Rotator Test - Random effects</h1>
+        <p>Expected result: Standard rotation with random effect from randomEffects on each item</p>
+        <ul id="alr-test-randomeffect">
             <li>ListItem 1</li>
             <li>ListItem 2</li>
             <li>ListItem 3</li>

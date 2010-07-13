@@ -1,6 +1,6 @@
 body {
-    margin: 20px;
-    padding: 0;
+    margin: 30px;
+    padding: 0 0 30px 0;
     font-family: arial;
     font-size: 12px;
     color: #333;
@@ -16,4 +16,14 @@ h1 {
 #alr-test-basic li.lbListRotatorItemActive,
 #alr-test-randomstart-shuffle li.lbListRotatorItemActive {
     color: #ff0000;
+}
+#alr-test-randomeffect {
+    position: relative;
+}
+#alr-test-randomeffect li {
+    position: absolute;
+    display: none;
+}
+#alr-test-randomeffect li.lbListRotatorItemActive {
+    z-index: 1;
 }

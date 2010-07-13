@@ -89,6 +89,8 @@ var lbListRotatorClass = {
         c.totalItems = c.$listRotator.find('li').length;
         // Current item
         c.currentItem = (c.settings.startIndex >= 0 && c.settings.startIndex < c.totalItems) ? c.settings.startIndex : 0;
+        // Current effect
+        c.currentEffect = false;
         // Shuffle array
         c.shuffledItems = new Array();
         // Timer
@@ -287,7 +289,7 @@ var lbListRotatorClass = {
         // Check if user interacted with helper during effect duration
         if (! c.userInteraction) {
             // Make sure the element is hidden when effect is done, not all effects end with hide
-            if (h && c.getItemEffect(c)) {
+            if (h && c.currentEffect) {
                 e.hide();
             }
             // Remove active class on previous active item
@@ -314,7 +316,8 @@ var lbListRotatorClass = {
         // Set animationRunning flag to true
         c.animationRunning = true;
         // Make sure jQuery UI is installed before running UI effects, if fade effect or UI isn't installed, run the standard fadeOut effect
-        if (c.getItemEffect(c) == 'slide') {
+        c.currentEffect = c.getItemEffect(c);
+        if (c.currentEffect == 'slide') {
             var pos = '-' + c.currentItem*c.effectOptions.slideBy;
             c.$listRotator.animate({left: pos}, c.getItemEffectTimer(c), 'swing', function() {
                 // Animation done, reset animationRunning flag
@@ -324,8 +327,8 @@ var lbListRotatorClass = {
                     c.continueRotation(c, e, false);
                 }
             });
-        } else if (e.effect && c.getItemEffect(c) != 'fade') {
-            e.effect(c.getItemEffect(c), c.getItemEffectOptions(c), c.getItemEffectTimer(c), function() {
+        } else if (e.effect && c.currentEffect != 'fade' && c.currentEffect !== false) {
+            e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectTimer(c), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
@@ -333,7 +336,7 @@ var lbListRotatorClass = {
                     c.continueRotation(c, e, true);
                 }
             });
-        } else if (c.getItemEffect(c) == 'fade') {
+        } else if (c.currentEffect == 'fade') {
             e.fadeOut(c.getItemEffectTimer(c), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
@@ -343,6 +346,12 @@ var lbListRotatorClass = {
                 }
             });
         } else {
+            // Debug?
+            if (c.settings.debug) {
+                if (c.currentEffect !== false) {
+                    console.debug('runEffect: Missing jQuery UI effects; Cannot run ' + c.currentEffect + '; Using none');
+                }
+            }
             // Animation done, reset animationRunning flag
             c.animationRunning = false;
             // Run callback?
@@ -467,9 +476,17 @@ var lbListRotatorClass = {
     getItemEffect: function(c) {
         var obj = c.getItemObj(c);
         if (obj !== false) {
-            return (typeof(obj.effect) == 'undefined') ? c.settings.effect : obj.effect;
+            if (typeof(obj.randomEffect) != 'undefined' && obj.randomEffect) {
+                return c.getRandomItemEffect(c, obj);
+            } else if (typeof(obj.effect) != 'undefined') {
+                // Debug?
+                if (c.settings.debug) {
+                    console.debug('getItemEffect: itemControl effect found; Using ' + obj.effect + ' for item ' + c.currentItem);
+                }
+                return obj.effect;
+            }
         }
-        return c.settings.effect;
+        return c.getRandomEffect(c);
     },
 
     getItemEffectTimer: function(c) {
@@ -494,5 +511,40 @@ var lbListRotatorClass = {
             return (typeof(obj.rotationInterval) == 'undefined') ? c.settings.rotationInterval : obj.rotationInterval;
         }
         return c.settings.rotationInterval;
+    },
+
+    getRandomEffect: function(c) {
+        if (c.settings.randomEffect) {
+            var randomEffectNumber = c.random(c.settings.randomEffects.length);
+            // Debug?
+            if (c.settings.debug) {
+                console.debug('getRandomEffect: true; Using ' + c.settings.randomEffects[randomEffectNumber] + ' for item ' + c.currentItem);
+            }
+            return c.settings.randomEffects[randomEffectNumber];
+        }
+        // Debug?
+        if (c.settings.debug) {
+            var effect = (c.settings.effect) ? c.settings.effect : 'none';
+            console.debug('getRandomEffect: false; Using ' + effect + ' for item ' + c.currentItem);
+        }
+        return c.settings.effect;
+    },
+
+    getRandomItemEffect: function(c, obj) {
+        var randomEffectNumber
+        if (typeof(obj.randomEffects) != 'undefined') {
+            randomEffectNumber = c.random(obj.randomEffects.length);
+            // Debug?
+            if (c.settings.debug) {
+                console.debug('getRandomItemEffect: found itemControl randomEffects; Using ' + obj.randomEffects[randomEffectNumber] + ' for item ' + c.currentItem);
+            }
+            return obj.randomEffects[randomEffectNumber];
+        }
+        randomEffectNumber = c.random(c.settings.randomEffects.length);
+        // Debug?
+        if (c.settings.debug) {
+            console.debug('getRandomItemEffect: no itemControl randomEffects, using standard; Using ' + c.settings.randomEffects[randomEffectNumber] + ' for item ' + c.currentItem);
+        }
+        return c.settings.randomEffects[randomEffectNumber];
     }
 }
