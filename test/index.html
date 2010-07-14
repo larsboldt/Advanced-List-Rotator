@@ -17,6 +17,34 @@
                 $('#alr-test-randomeffect').advListRotator({
                     randomEffect: true
                 });
+                $('#alr-test-manual-move').advListRotator({
+                    autoStart: false,
+                    disableRotationEngine: true,
+                    nextItemElement: '#alrNext',
+                    previousItemElement: '#alrPrevious'
+                });
+                $('#alr-test-master').advListRotator({
+                    helper: '#alr-test-helper'
+                });
+                $('#alr-test-item-control').advListRotator({
+                    itemControl: {
+                        listIndex_0: {
+                            rotationInterval: 500
+                        },
+                        listIndex_1: {
+                            rotationInterval: 750
+                        },
+                        listIndex_2: {
+                            rotationInterval: 1000
+                        },
+                        listIndex_3: {
+                            rotationInterval: 1250
+                        },
+                        listIndex_4: {
+                            rotationInterval: 1500
+                        }
+                    }
+                });
             });
         </script>
     </head>
@@ -30,7 +58,7 @@
             <li>ListItem 4</li>
             <li>ListItem 5</li>
         </ul>
-        <h1>Advanced List Rotator Test - Random start / Shuffle</h1>
+        <h1>Advanced List Rotator Test - Random start with shuffle</h1>
         <p>Expected result: Shuffled rotation with random start, standard css class applied to active element</p>
         <ul id="alr-test-randomstart-shuffle">
             <li>ListItem 1</li>
@@ -47,6 +75,44 @@
             <li>ListItem 3</li>
             <li>ListItem 4</li>
             <li>ListItem 5</li>
+        </ul>
+        <h1>Advanced List Rotator Test - Moving through list manually</h1>
+        <p>Expected result: Disabled rotation, click to move forth or back in list</p>
+        <ul id="alr-test-manual-move">
+            <li>ListItem 1</li>
+            <li>ListItem 2</li>
+            <li>ListItem 3</li>
+            <li>ListItem 4</li>
+            <li>ListItem 5</li>
+        </ul>
+        <ul id="alr-test-manual-move-elements">
+            <li><a name="alrPrevious" id="alrPrevious" href="#alrPrevious">&laquo; Previous</a></li>
+            <li><a name="alrNext" id="alrNext" href="#alrNext">Next &raquo;</a></li>
+        </ul>
+        <h1>Advanced List Rotator Test - Helper</h1>
+        <p>Expected result: Standard rotation with interactive helper</p>
+        <ul id="alr-test-master">
+            <li>ListItem 1</li>
+            <li>ListItem 2</li>
+            <li>ListItem 3</li>
+            <li>ListItem 4</li>
+            <li>ListItem 5</li>
+        </ul>
+        <ul id="alr-test-helper">
+            <li>HelperItem 1</li>
+            <li>HelperItem 2</li>
+            <li>HelperItem 3</li>
+            <li>HelperItem 4</li>
+            <li>HelperItem 5</li>
+        </ul>
+        <h1>Advanced List Rotator Test - itemControl</h1>
+        <p>Expected result: Standard rotation with individual timers</p>
+        <ul id="alr-test-item-control">
+            <li>ListItem 1 (rInt 500)</li>
+            <li>ListItem 2 (rInt 750)</li>
+            <li>ListItem 3 (rInt 1000)</li>
+            <li>ListItem 4 (rInt 1250)</li>
+            <li>ListItem 5 (rInt 1500)</li>
         </ul>
     </body>
 </html>

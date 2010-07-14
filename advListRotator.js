@@ -141,7 +141,7 @@ var AdvancedListRotatorClass = {
                     // Stop rotationEngine
                     c.stopRotationEngine(c);
                     // Hide active content
-                    if (c.settings.effect != 'slide') {
+                    if (c.currentEffect != 'slide' && c.currentEffect !== false) {
                         c.$listRotator.children().hide();
                     }
                     // Remove active class from helper
@@ -363,10 +363,13 @@ var AdvancedListRotatorClass = {
 
     stopRotationEngine: function(c) {
         // Stop rotationEngine
-        clearInterval(c.tId);
-        // Debug?
-        if (c.settings.debug && c.in_array('info', c.settings.debugLevel)) {
-            console.info('stopRotationEngine: Rotation Engine stopped');
+        if (c.tId) {
+            clearInterval(c.tId);
+            c.tId = null;
+            // Debug?
+            if (c.settings.debug && c.in_array('info', c.settings.debugLevel)) {
+                console.info('stopRotationEngine: Rotation Engine stopped');
+            }
         }
     },
 
@@ -375,10 +378,11 @@ var AdvancedListRotatorClass = {
         c.stopRotationEngine(c);
         // Start rotationEngine as long as disableRotationEngine is false
         if (! c.settings.disableRotationEngine) {
-            c.tId = setInterval(function() {c.rotationEngine(c)}, c.getItemRotationInterval(c));
+            var rInt = c.getItemRotationInterval(c);
+            c.tId = setInterval(function() {c.rotationEngine(c)}, rInt);
             // Debug?
             if (c.settings.debug && c.in_array('info', c.settings.debugLevel)) {
-                console.info('startRotationEngine: Rotation Engine started');
+                console.info('startRotationEngine: Rotation Engine started; interval ' + rInt + '; currentItem ' + c.currentItem);
             }
         }
     },
@@ -468,8 +472,8 @@ var AdvancedListRotatorClass = {
     },
 
     getItemObj: function(c) {
-        var actualItem = (c.currentItem > 0) ? c.currentItem-1 : c.totalItems-1;
-        var obj = eval("c.itemControl.listIndex_"+actualItem);
+        //var actualItem = (c.currentItem > 0) ? c.currentItem-1 : c.totalItems-1;
+        var obj = eval("c.itemControl.listIndex_" + c.currentItem);
         return (typeof(obj) == 'undefined') ? false : obj;
     },
 
