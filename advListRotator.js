@@ -24,7 +24,7 @@ if (typeof Object.create !== 'function') {
  * Copyright (c) 2010 Lars Boldt (larsboldt.com)
  * E-mail: boldt.lars@gmail.com
  * Version: 1.3
- * Released: -
+ * Released: 07.15.2010
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
