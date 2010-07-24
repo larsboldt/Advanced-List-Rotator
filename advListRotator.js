@@ -23,8 +23,8 @@ if (typeof Object.create !== 'function') {
 /* Advanced List Rotator
  * Copyright (c) 2010 Lars Boldt (larsboldt.com)
  * E-mail: boldt.lars@gmail.com
- * Version: 1.3
- * Released: 07.15.2010
+ * Version: 1.4
+ * Released: -
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -119,60 +119,15 @@ var AdvancedListRotatorClass = {
             }
         }
 
-        // Display first content
-        c.$listRotator.children().each(function(index) {
-            if (index == c.currentItem) {
-                if (c.settings.effect == 'slide') {
-                    var pos = '-' + c.currentItem*c.effectOptions.slideBy;
-                    c.$listRotator.css('left', pos);
-                }
-                jQuery(this).show();
-                jQuery(this).addClass(c.settings.activeItemClass);
-                c.setHelperClass(c, index, true);
-            }
-        });
+        // Initializes items based on current effect
+        c.currentEffect = c.getItemEffect(c);
+        c.onInitItem(c);
 
         // Loop all helper elements within the ul and bind mouseover/mouseout functionality to them
         if (jQuery(c.settings.helper).length > 0) {
             jQuery(c.settings.helper).children().each(function() {
                 jQuery(this).bind(c.settings.helperInteraction, function() {
-                    // Set userInteraction true
-                    c.userInteraction = true;
-                    // Stop rotationEngine
-                    c.stopRotationEngine(c);
-                    // Make sure currentEffect is actually set (certain configs might not set this value)
-                    c.currentEffect = c.getItemEffect(c);
-                    // Hide active content
-                    if (c.currentEffect != 'slide' && c.currentEffect !== false) {
-                        c.$listRotator.children().hide();
-                    }
-                    // Remove active class from helper
-                    c.$listRotator.children().removeClass(c.settings.activeItemClass);
-                    jQuery(c.settings.helper).children().removeClass(c.settings.helperActiveItemClass);
-                    // Find position of current item
-                    c.currentItem = jQuery(this).index();
-                    // Show current content
-                    c.$listRotator.children().each(function (index) {
-                        if (index == c.currentItem) {
-                            // Stop animations on this element
-                            jQuery(this).stop();
-                            
-                            // Reset opacity incase animation was fade
-                            jQuery(this).css('opacity', 1);
-                            // Show element
-                            jQuery(this).show();
-                            
-                            if (c.settings.effect == 'slide') {
-                                c.runEffect(c, jQuery(this), false);
-                            }
-
-                            // Add active class to helper
-                            jQuery(this).addClass(c.settings.activeItemClass);
-                            c.setHelperClass(c, index, true);
-                            return false;
-                        }
-                        return true;
-                    });
+                    c.interaction(c, jQuery(this));
                 });
                 jQuery(this).bind('mouseout', function() {
                     // Start rotationEngine
@@ -201,7 +156,6 @@ var AdvancedListRotatorClass = {
         }
     },
 
-    // rotationEngine
     rotationEngine: function(c) {
         // Stop rotationEngine
         c.stopRotationEngine(c);
@@ -209,112 +163,81 @@ var AdvancedListRotatorClass = {
         // Reset userInteraction
         c.userInteraction = false;
 
-        // Hide open content
-        c.$listRotator.children().each(function(index) {
-            if (index == c.currentItem) {
-                // Should we calculate next item index?
-                if (c.calculateNextItem) {
-                    // Is shuffle set?
-                    if (c.settings.shuffle) {
-                        // Get a random item, but make sure every item is shown in each rotation
-                        c.currentItem = c.shuffleRotationEngine(c, c.totalItems);
-                    } else {
-                        // Activate next item
-                        c.currentItem++;
-                        // Make sure currentItem resets at the end of the itemlist
-                        c.currentItem = (c.currentItem >= c.totalItems) ? 0 : c.currentItem;
+        // Get current item obj
+        var e = c.getCurrentItemObj(c);
+        // Remove active class
+        c.setHelperClass(c, c.currentItem, false);
+
+        // Should we calculate next item index?
+        if (c.calculateNextItem) {
+            // Is shuffle set?
+            if (c.settings.shuffle) {
+                // Get a random item, but make sure every item is shown in each rotation
+                c.currentItem = c.shuffleRotationEngine(c, c.totalItems);
+            } else {
+                // Activate next item
+                c.currentItem++;
+                // Make sure currentItem resets at the end of the itemlist
+                c.currentItem = (c.currentItem >= c.totalItems) ? 0 : c.currentItem;
+            }
+        } else {
+            // Calculate previous item index instead
+            // Going backwards is alittle more complicated because of shuffle
+            // Is shuffle enabled?
+            if (c.settings.shuffle) {
+                // Now we need to find the previous previous item based on the shuffleItems list
+                if (c.shuffledItems.length >= 1) {
+                    for (var j=0; j < c.shuffledItems.length; j++) {
+                        if (c.shuffledItems[j] == c.previousItem) {
+                            // Moving backwards in the shuffledItems list will only hold true until we reach zero.
+                            // At this point you will get a random item if you keep going backwards
+                            // However, this is complicated by the fact that shuffledItems is reset at the last item.
+                            // Moving backwards when you are at the last item in the current shuffle gives you a
+                            // random item
+                            do {
+                                j--;
+                                c.previousItem = (j < 0) ? c.shuffleRotationEngine(c, c.totalItems) : c.shuffledItems[j];
+                            } while (c.currentItem == c.previousItem);
+                            break;
+                        }
                     }
                 } else {
-                    // Calculate previous item index instead
-                    // Going backwards is alittle more complicated because of shuffle
-                    // Is shuffle enabled?
-                    if (c.settings.shuffle) {
-                        // Now we need to find the previous previous item based on the shuffleItems list
-                        if (c.shuffledItems.length >= 1) {
-                            for (var j=0; j < c.shuffledItems.length; j++) {
-                                if (c.shuffledItems[j] == c.previousItem) {
-                                    // Moving backwards in the shuffledItems list will only hold true until we reach zero.
-                                    // At this point you will get a random item if you keep going backwards
-                                    // However, this is complicated by the fact that shuffledItems is reset at the last item.
-                                    // Moving backwards when you are at the last item in the current shuffle gives you a
-                                    // random item
-                                    do {
-                                        j--;
-                                        c.previousItem = (j < 0) ? c.shuffleRotationEngine(c, c.totalItems) : c.shuffledItems[j];
-                                    } while (c.currentItem == c.previousItem);
-                                    break;
-                                }
-                            }
-                        } else {
-                            // shuffledItems was reset.
-                            c.previousItem = c.shuffleRotationEngine(c, c.totalItems);
-                        }
-                        // Set currentItem to the previous shuffled item
-                        c.currentItem = c.previousItem;
-                    } else {
-                        // Move index back once
-                        c.currentItem--;
-                        // Once index goes below zero we simply move it to the last item in the list, creating an endless loop
-                        c.currentItem = (c.currentItem < 0) ? (c.totalItems-1) : c.currentItem;
-                    }
+                    // shuffledItems was reset.
+                    c.previousItem = c.shuffleRotationEngine(c, c.totalItems);
                 }
-
-                // Loop all li elements until you locate the new active item
-                c.$listRotator.children().each(function (idx) {
-                    // Is next item found?
-                    if (idx == c.currentItem) {                      
-                        // Show item
-                        jQuery(this).show();
-                        // Give it the active class
-                        c.setHelperClass(c, idx, true);
-                        // Remove active class from current active item
-                        c.setHelperClass(c, index, false);
-
-                        return false;
-                    }
-                    return true;
-                });
-
-                // Reset item index calculation
-                c.calculateNextItem = true;
-
-                // Run effect
-                c.runEffect(c, jQuery(this), true);
-
-                return false;
+                // Set currentItem to the previous shuffled item
+                c.currentItem = c.previousItem;
+            } else {
+                // Move index back once
+                c.currentItem--;
+                // Once index goes below zero we simply move it to the last item in the list, creating an endless loop
+                c.currentItem = (c.currentItem < 0) ? (c.totalItems-1) : c.currentItem;
             }
-            return true;
-        });
+        }
+
+        // Set active helper class
+        c.setHelperClass(c, c.currentItem, true);
+
+        // Reset item index calculation
+        c.calculateNextItem = true;
+
+        // Run effect
+        c.runEffect(c, e, true);
     },
 
-    continueRotation: function(c, e, h) {
+    continueRotation: function(c, e) {
         // Check if user interacted with helper during effect duration
         if (! c.userInteraction) {
-            // Make sure the element is hidden when effect is done, not all effects end with hide
-            if (h && c.currentEffect) {
-                e.hide();
-            }
-            // Remove active class on previous active item
-            e.removeClass(c.settings.activeItemClass);
-
-            // Loop all li elements until you locate the new active item
-            c.$listRotator.children().each(function (index) {
-                // Is next item found?
-                if (index == c.currentItem) {
-                    // Give it the active class
-                    jQuery(this).addClass(c.settings.activeItemClass);
-
-                    return false;
-                }
-                return true;
-            });
-
+            // Set item classes
+            c.setItemClass(c);
             // Start rotationEngine
             this.startRotationEngine(c);
         }
     },
 
     runEffect: function(c, e, runCallback) {
+        // Get obj based on currentItem
+        var obj = c.getCurrentItemObj(c);
         // Set animationRunning flag to true
         c.animationRunning = true;
         // Make sure jQuery UI is installed before running UI effects, if fade effect or UI isn't installed, run the standard fadeOut effect
@@ -326,25 +249,29 @@ var AdvancedListRotatorClass = {
                 c.animationRunning = false;
                 // Run callback?
                 if (runCallback) {
-                    c.continueRotation(c, e, false);
+                    c.continueRotation(c, e);
                 }
             });
         } else if (e.effect && c.currentEffect != 'fade' && c.currentEffect !== false) {
+            obj.show();
             e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectTimer(c), function() {
+                // Hide item
+                e.hide();
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
                 if (runCallback) {
-                    c.continueRotation(c, e, true);
+                    c.continueRotation(c, e);
                 }
             });
         } else if (c.currentEffect == 'fade') {
+            obj.show();
             e.fadeOut(c.getItemEffectTimer(c), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
                 if (runCallback) {
-                    c.continueRotation(c, e, true);
+                    c.continueRotation(c, e);
                 }
             });
         } else {
@@ -358,9 +285,29 @@ var AdvancedListRotatorClass = {
             c.animationRunning = false;
             // Run callback?
             if (runCallback) {
-                c.continueRotation(c, e, true);
+                c.continueRotation(c, e);
             }
         }
+    },
+
+    interaction: function(c, e) {
+        // Set userInteraction true
+        c.userInteraction = true;
+        // Stop rotationEngine
+        c.stopRotationEngine(c);
+        // Make sure currentEffect is actually set (certain configs might not set this value)
+        c.currentEffect = c.getItemEffect(c);        
+        // Call onBeforeShowItem which handle inactive items based on effect in use
+        c.onBeforeShowItem(c);
+        // Remove active class from helper
+        c.$listRotator.children().removeClass(c.settings.activeItemClass);
+        jQuery(c.settings.helper).children().removeClass(c.settings.helperActiveItemClass);
+        // Find position of current item
+        c.currentItem = e.index();
+        // Call onShowItem which handle how an item is shown based on effect in use
+        c.onShowItem(c);
+        // Set active helper class
+        c.setHelperClass(c, c.currentItem, true);
     },
 
     stopRotationEngine: function(c) {
@@ -431,6 +378,16 @@ var AdvancedListRotatorClass = {
         return Math.floor(Math.random()*max);
     },
 
+    setItemClass: function(c) {
+        // Remove active class
+        c.$listRotator.children().removeClass(c.settings.activeItemClass);
+        // Add active itemclass
+        var obj = c.getCurrentItemObj(c);
+        if (obj) {
+            obj.addClass(c.settings.activeItemClass);
+        }
+    },
+
     setHelperClass: function(c, n, status) {
         // Make sure helper object is set
         if (jQuery(c.settings.helper).length > 0) {
@@ -473,8 +430,22 @@ var AdvancedListRotatorClass = {
         }
     },
 
+    getCurrentItemObj: function(c) {
+        var obj = false;
+        // Loop all li elements until you locate the new active item
+        c.$listRotator.children().each(function (index) {
+            // Is next item found?
+            if (index == c.currentItem) {
+                // Set item as jQuery obj
+                obj = jQuery(this);
+                return false;
+            }
+            return true;
+        });
+        return obj;
+    },
+
     getItemObj: function(c) {
-        //var actualItem = (c.currentItem > 0) ? c.currentItem-1 : c.totalItems-1;
         var obj = eval("c.itemControl.listIndex_" + c.currentItem);
         return (typeof(obj) == 'undefined') ? false : obj;
     },
@@ -552,5 +523,69 @@ var AdvancedListRotatorClass = {
             console.debug('getRandomItemEffect: no itemControl randomEffects, using standard; Using ' + c.settings.randomEffects[randomEffectNumber] + ' for item ' + c.currentItem);
         }
         return c.settings.randomEffects[randomEffectNumber];
+    },
+
+    onInitItem: function(c) {
+        // Get current item
+        var obj = c.getCurrentItemObj(c);
+        if (obj) {
+            switch (c.currentEffect) {
+                case 'slide':
+                    var pos = '-' + c.currentItem*c.effectOptions.slideBy;
+                    c.$listRotator.css('left', pos);
+                    break;
+                case 'blind':
+                case 'clip':
+                case 'explode':
+                case 'fade':
+                case 'fold':
+                    obj.show();
+                    break;
+            }
+            // Add active class
+            obj.addClass(c.settings.activeItemClass);
+            // Add active class to helper
+            c.setHelperClass(c, c.currentItem, true);
+        }
+    },
+
+    onBeforeShowItem: function(c) {
+        switch (c.currentEffect) {
+            case 'blind':
+            case 'clip':
+            case 'explode':
+            case 'fade':
+            case 'fold':
+                c.$listRotator.children().hide();
+                break;
+        }
+    },
+
+    onShowItem: function(c) {
+        // Get current item
+        var obj = c.getCurrentItemObj(c);
+        if (obj) {
+            // Stop animations on this element
+            obj.stop();
+            switch (c.currentEffect) {
+                case 'fade':
+                    obj.css('opacity', 1);
+                    // Show element
+                    obj.show();
+                    break;
+                case 'slide':
+                    c.runEffect(c, obj, false);
+                    break;
+                case 'blind':
+                case 'clip':
+                case 'explode':
+                case 'fold':
+                    // Show element
+                    obj.show();
+                    break;
+            }
+            // Add active class
+            obj.addClass(c.settings.activeItemClass);
+        }
     }
 }
