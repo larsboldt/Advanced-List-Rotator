@@ -225,7 +225,7 @@ var AdvancedListRotatorClass = {
         c.runEffect(c, e, true);
     },
 
-    continueRotation: function(c, e) {
+    continueRotation: function(c) {
         // Check if user interacted with helper during effect duration
         if (! c.userInteraction) {
             // Set item classes
@@ -248,12 +248,12 @@ var AdvancedListRotatorClass = {
             // Calculate the new position
             var pos = '-' + c.currentItem*c.effectOptions.slideBy;
             // Slide listRotator obj to the new position
-            c.$listRotator.animate({left: pos}, c.getItemEffectTimer(c), 'swing', function() {
+            c.$listRotator.animate({left: pos}, c.getItemEffectTimer(c), c.getItemEffectEasing(c, e), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
                 if (runCallback) {
-                    c.continueRotation(c, e);
+                    c.continueRotation(c);
                 }
             });
         } else if (e.effect && c.currentEffect != 'fade' && c.currentEffect !== false) {
@@ -265,7 +265,7 @@ var AdvancedListRotatorClass = {
                 c.animationRunning = false;
                 // Run callback?
                 if (runCallback) {
-                    c.continueRotation(c, e);
+                    c.continueRotation(c);
                 }
             });
         } else if (c.currentEffect == 'fade') {
@@ -275,7 +275,7 @@ var AdvancedListRotatorClass = {
                 c.animationRunning = false;
                 // Run callback?
                 if (runCallback) {
-                    c.continueRotation(c, e);
+                    c.continueRotation(c);
                 }
             });
         } else {
@@ -289,7 +289,7 @@ var AdvancedListRotatorClass = {
             c.animationRunning = false;
             // Run callback?
             if (runCallback) {
-                c.continueRotation(c, e);
+                c.continueRotation(c);
             }
         }
     },
@@ -484,6 +484,11 @@ var AdvancedListRotatorClass = {
             return (typeof(obj.effectOptions) == 'undefined') ? c.effectOptions : jQuery.extend({}, c.effectOptions, obj.effectOptions);
         }
         return c.effectOptions;
+    },
+
+    getItemEffectEasing: function(c, e) {
+        var opts = c.getItemEffectOptions(c);
+        return (typeof(opts.easing) != 'undefined' && e.effect) ? opts.easing : 'swing';
     },
 
     getItemRotationInterval: function(c) {

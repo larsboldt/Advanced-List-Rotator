@@ -1,3 +1,11 @@
+1.4
+New:
+- Added easing in effectOptions which allows you to specify easing for the slide
+  effect. Requires jQuery UI. Refer to the jQuery UI documentation for easing
+  names (http://jqueryui.com/demos/effect/#easing). You can also specify
+  easing on an per item basis using itemControl which allows for different
+  easing on each item.
+
 1.3
 New:
 - Added itemControl which allows you to specify effects, timers and other

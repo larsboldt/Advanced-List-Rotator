@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <title>Advanced List Rotator 1.3 - Documentation</title>
+        <title>Advanced List Rotator 1.4 - Documentation</title>
         <link href="default.css" type="text/css" rel="stylesheet" />
     </head>
     <body>
@@ -25,7 +25,7 @@
                 NB: Some effects must have additional arguments to work. Currently this is the &#8220;slide&#8221; effect. Please note that aside from fade and slide, all the other effects require jQuery UI to be included. If not, it will default back to none.</li>
             <li><strong>effectOptions (JSON object)<br />
                 </strong>Default: {}<br />
-                Currently supported setting is slideBy for the slide effect, it tells the engine how many pixels to move for each slide. This value must be the exact width of the content of the list element (&lt;li&gt;). Image width is an example of this.</li>
+                Currently supported settings are slideBy and easing for the slide effect. Slideby tells the engine how many pixels to move for each slide. This value must be the exact width of the content of the list element (&lt;li&gt;). Image width is an example of this. Easing tells the engine how to animate each slide. Defaults to swing. For additional easing, jQuery UI is required. Refer to jQuery UI easing documentation for easing names.</li>
             <li><strong>shuffle (boolean)</strong><br />
                 Default: false<br />
                 If true, the next item is picked on random. All items are shown once before the engine resets and starts all over again.</li>
@@ -81,13 +81,14 @@
                 Default: none<br />
                 Lets you specify rotationInterval, effect, effectTimer, effectOptions, randomEffect and randomEffects on an per item basis. Each item is specified with itemIndex_n where n is the item index, which is zero based. See below for example.</li>
         </ul>
-        <p>Option example:</p>
+        <p>Option example (shows how to use settings, actual setting combination might not work):</p>
         <pre class="brush:javascript">jQuery(document).ready(function($) {
     $('.myList').advListRotator({
         helper: '#myHelperId',
         rotationInterval: 2000,
         effectTimer: 500,
         effect: 'slide',
+        effectOptions: {slideBy: 100, easing: 'easeInBack'},
         shuffle: true,
         activeItemClass: 'myActiveItemClass',
         randomEffect: true,
