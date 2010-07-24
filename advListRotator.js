@@ -243,7 +243,11 @@ var AdvancedListRotatorClass = {
         // Make sure jQuery UI is installed before running UI effects, if fade effect or UI isn't installed, run the standard fadeOut effect
         c.currentEffect = c.getItemEffect(c);
         if (c.currentEffect == 'slide') {
+            // Cancel all running animations on the listRotator obj
+            c.$listRotator.stop();
+            // Calculate the new position
             var pos = '-' + c.currentItem*c.effectOptions.slideBy;
+            // Slide listRotator obj to the new position
             c.$listRotator.animate({left: pos}, c.getItemEffectTimer(c), 'swing', function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
@@ -565,10 +569,11 @@ var AdvancedListRotatorClass = {
         // Get current item
         var obj = c.getCurrentItemObj(c);
         if (obj) {
-            // Stop animations on this element
-            obj.stop();
             switch (c.currentEffect) {
                 case 'fade':
+                    // Stop any ongoing animations
+                    obj.stop();
+                    // Reset opacity
                     obj.css('opacity', 1);
                     // Show element
                     obj.show();
@@ -580,6 +585,8 @@ var AdvancedListRotatorClass = {
                 case 'clip':
                 case 'explode':
                 case 'fold':
+                    // Stop any ongoing animations
+                    obj.stop();
                     // Show element
                     obj.show();
                     break;

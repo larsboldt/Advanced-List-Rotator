@@ -50,3 +50,19 @@ li.alrHelperActiveItem {
     float: left;
     margin-right: 15px;
 }
+#alr-test-slide-mask {
+    width: 100px;
+    height: 20px;
+    position: relative;
+    overflow: hidden;
+}
+#alr-test-slide {
+    position: absolute;
+    width: 500px;
+    height: 12px;
+    margin: 0;
+}
+#alr-test-slide li {
+    float: left;
+    margin-right: 40px;
+}

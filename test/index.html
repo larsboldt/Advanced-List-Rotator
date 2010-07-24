@@ -45,6 +45,11 @@
                         }
                     }
                 });
+                $('#alr-test-slide').advListRotator({
+                    effect: 'slide',
+                    effectOptions: {slideBy: 92},
+                    helper: '#alr-test-slide-helper'
+                });
             });
         </script>
     </head>
@@ -76,7 +81,7 @@
             <li>ListItem 4</li>
             <li>ListItem 5</li>
         </ul>
-        <h1>Advanced List Rotator Test - Moving through list manually</h1>
+        <h1>Advanced List Rotator Test - Moving through list manually<a name="alr-manual-move"></a></h1>
         <p>Expected result: Disabled rotation, click to move forth or back in list</p>
         <ul id="alr-test-manual-move">
             <li>ListItem 1</li>
@@ -86,8 +91,8 @@
             <li>ListItem 5</li>
         </ul>
         <ul id="alr-test-manual-move-elements">
-            <li><a name="alrPrevious" id="alrPrevious" href="#alrPrevious">&laquo; Previous</a></li>
-            <li><a name="alrNext" id="alrNext" href="#alrNext">Next &raquo;</a></li>
+            <li><a id="alrPrevious" href="#alr-manual-move">&laquo; Previous</a></li>
+            <li><a id="alrNext" href="#alr-manual-move">Next &raquo;</a></li>
         </ul>
         <h1>Advanced List Rotator Test - Helper</h1>
         <p>Expected result: Standard rotation with interactive helper</p>
@@ -113,6 +118,24 @@
             <li>ListItem 3 (rInt 1000)</li>
             <li>ListItem 4 (rInt 1250)</li>
             <li>ListItem 5 (rInt 1500)</li>
+        </ul>
+        <h1>Advanced List Rotator Test - slide effect</h1>
+        <p>Expected result: Standard rotation with slide effect and helper object</p>
+        <div id="alr-test-slide-mask">
+            <ul id="alr-test-slide">
+                <li>ListItem 1</li>
+                <li>ListItem 2</li>
+                <li>ListItem 3</li>
+                <li>ListItem 4</li>
+                <li>ListItem 5</li>
+            </ul>
+        </div>
+        <ul id="alr-test-slide-helper">
+            <li>HelperItem 1</li>
+            <li>HelperItem 2</li>
+            <li>HelperItem 3</li>
+            <li>HelperItem 4</li>
+            <li>HelperItem 5</li>
         </ul>
     </body>
 </html>
