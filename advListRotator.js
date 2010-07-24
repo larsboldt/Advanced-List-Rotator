@@ -140,6 +140,8 @@ var AdvancedListRotatorClass = {
                     c.userInteraction = true;
                     // Stop rotationEngine
                     c.stopRotationEngine(c);
+                    // Make sure currentEffect is actually set (certain configs might not set this value)
+                    c.currentEffect = c.getItemEffect(c);
                     // Hide active content
                     if (c.currentEffect != 'slide' && c.currentEffect !== false) {
                         c.$listRotator.children().hide();

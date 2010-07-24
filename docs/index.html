@@ -9,77 +9,100 @@
         Requires:
         <ul>
             <li>jQuery library 1.42+</li>
-            <li>jQuery UI library 1.81+ (optional)</li>
+            <li>jQuery UI library 1.82+ (optional)</li>
         </ul>
-        Options:
+        <p>Options:</p>
         <ul>
-            <li> <strong>rotationInterval (int)</strong>
-        Default: 5000
-        The time, in miliseconds, it takes before the next item is shown.</li>
-            <li><strong>effectTimer (int)</strong>
-        Default: 1000
-        The time, in miliseconds, it takes for the effect to finish.</li>
-            <li><strong>effect (string)</strong>
-        Default: fade
-        Supported effects are: blind, clip, explode, fade, fold, slide
-        NB: Some effects must have additional arguments to work. Currently this is the "slide" effect. Please note that aside from fade and slide, all the other effects require jquery ui to be included. If not, it will default back to fade.</li>
-            <li><strong>effectOptions (array)
-        </strong>Default: {slideBy: 100}
-        Currently supported setting is slideBy for the slide effect, it tells the engine how many pixels to move for each slide. This value must be the exact width of the content of the list element (&lt;li&gt;). Image width is an example of this.</li>
-            <li><strong>shuffle (boolean)</strong>
-        Default: false
-        If true, the next item is picked on random. All items are shown once before the engine resets and starts all over again.</li>
-            <li><strong>randomStart (boolean)</strong>
-        Default: false
-        If true, the first item is randomly picked on start. If false, the first item in the list is shown on start.</li>
-            <li><strong>autoStart (boolean)</strong>
-        Default: true
-        If false, rotationEngine is not started on start. The rotationEngine will start when an action that starts the engine is performed, for example a mouseover event.</li>
-            <li><strong>disableRotationEngine (boolean)</strong>
-        Default: false
-        If true, the rotationEngine will never run, even when events that is suppose to start it is fired.</li>
-            <li><strong>listRotatorHelper (jQuery selector)</strong>
-        Default: false
-        If set, the main list is linked to a helper list, which can be used for thumbnails, tabs, text etc. The item order of both lists must match.</li>
-            <li><strong>activeItemClass (string)</strong>
-        Default: lbListRotatorItemActive
-        Class that is put on active main list item</li>
-            <li><strong>activeHelperItemClass (string)</strong>
-        Default: lbListRotatorHelperItemActive
-        Class that is put on active helper list item</li>
-            <li><strong>helperInteraction (string)</strong>
-        Default: mouseover
-        Possible values are click and mouseover. Trigger event on user interaction with helper.</li>
-            <li><strong>startIndex (int)</strong>
-        Default: 0
-        Sets the active item on first run. 0 is first. This setting will be overriden if randomStart is set to true.</li>
-            <li><strong>nextItemElement (jQuery selector) (Added in 1.2)</strong>
-        Default: false
-        If set, interaction with the element will move the list rotation forward.</li>
-            <li><strong>previousItemElement (jQuery selector)</strong> <strong>(Added in 1.2)</strong>
-        Defualt: false
-        If set, interaction with the element will move the list rotation backwards.</li>
-            <li><strong>nextItemElementInteraction (string) </strong><strong>(Added in 1.2)</strong>
-        Default: click
-        Possible values are click and mouseover.</li>
-            <li><strong>previousItemElementInteraction (string) </strong><strong>(Added in 1.2)</strong>
-        Default: click
-        Possible values are click and mouseover.</li>
+            <li> <strong>rotationInterval (int)</strong><br />
+                Default: 5000<br />
+                The time, in miliseconds, it takes before the next item is shown.</li>
+            <li><strong>effectTimer (int)</strong><br />
+                Default: 1000<br />
+                The time, in miliseconds, it takes for the effect to finish.</li>
+            <li><strong>effect (string)</strong><br />
+                Default: false (none)<br />
+                Supported effects are: blind, clip, explode, fade, fold, slide<br />
+                NB: Some effects must have additional arguments to work. Currently this is the &#8220;slide&#8221; effect. Please note that aside from fade and slide, all the other effects require jQuery UI to be included. If not, it will default back to none.</li>
+            <li><strong>effectOptions (JSON object)<br />
+                </strong>Default: {}<br />
+                Currently supported setting is slideBy for the slide effect, it tells the engine how many pixels to move for each slide. This value must be the exact width of the content of the list element (&lt;li&gt;). Image width is an example of this.</li>
+            <li><strong>shuffle (boolean)</strong><br />
+                Default: false<br />
+                If true, the next item is picked on random. All items are shown once before the engine resets and starts all over again.</li>
+            <li><strong>randomStart (boolean)</strong><br />
+                Default: false<br />
+                If true, the first item is randomly picked on start. If false, the first item in the list is shown on start.</li>
+            <li><strong>autoStart (boolean)</strong><br />
+                Default: true<br />
+                If false, rotationEngine is not started on start. The rotationEngine will start when an action that starts the engine is performed, for example a mouseover event.</li>
+            <li><strong>disableRotationEngine (boolean)</strong><br />
+                Default: false<br />
+                If true, the rotationEngine will never run, even when events that is suppose to start it is fired.</li>
+            <li><strong>helper (jQuery selector)</strong><br />
+                Default: false<br />
+                If set, the main list is linked to a helper list, which can be used for thumbnails, tabs, text etc. The item order of both lists must match.</li>
+            <li><strong>activeItemClass (string)</strong><br />
+                Default: alrActiveItem<br />
+                Class that is put on active main list item</li>
+            <li><strong>helperActiveItemClass (string)</strong><br />
+                Default: alrHelperActiveItem<br />
+                Class that is put on active helper list item</li>
+            <li><strong>helperInteraction (string)</strong><br />
+                Default: mouseover<br />
+                Possible values are click and mouseover. Trigger event on user interaction with helper.</li>
+            <li><strong>startIndex (int)</strong><br />
+                Default: 0<br />
+                Sets the active item on first run. 0 is first. This setting will be overriden if randomStart is set to true.</li>
+            <li><strong>nextItemElement (jQuery selector)</strong><br />
+                Default: false<br />
+                If set, interaction with the element will move the list rotation forward.</li>
+            <li><strong>previousItemElement (jQuery selector)</strong><br />
+                Defualt: false<br />
+                If set, interaction with the element will move the list rotation backwards.</li>
+            <li><strong>nextItemElementInteraction (string)</strong><br />
+                Default: click<br />
+                Possible values are click and mouseover.</li>
+            <li><strong>previousItemElementInteraction (string)</strong><br />
+                Default: click<br />
+                Possible values are click and mouseover.</li>
+            <li><strong>randomEffect (boolean)</strong><br />
+                Default: false<br />
+                If set to true, a random effect from the randomEffects array is picked for each rotation.</li>
+            <li><strong>randomEffects (Array)</strong><br />
+                Default: blind, clip, explode, fade, fold<br />
+                You can override this with your own array of effects</li>
+            <li><strong>debug (boolean)</strong><br />
+                Default: false<br />
+                If set to true, debug information is outputted through FireBug console (requires FireBug)</li>
+            <li><strong>debugLevel (Array)</strong><br />
+                Default: debug, info, warn, error<br />
+                You can override this with your own array of debugLevels</li>
+            <li><strong>itemControl (JSON object)</strong><br />
+                Default: none<br />
+                Lets you specify rotationInterval, effect, effectTimer, effectOptions, randomEffect and randomEffects on an per item basis. Each item is specified with itemIndex_n where n is the item index, which is zero based. See below for example.</li>
         </ul>
-        Option example:
-        <pre>
-            <code>
-            jQuery(document).ready(function($) {
-                $('.myList').lbListRotator({
-                    listRotatorHelper: '#myHelperId',
-                    rotationInterval: 2000,
-                    effectTimer: 500,
-                    effect: 'slide',
-                    shuffle: true,
-                    activeItemClass: 'myActiveItemClass'
-                });
-            });
-            </code>
-        </pre>
+        <p>Option example:</p>
+        <pre class="brush:javascript">jQuery(document).ready(function($) {
+    $('.myList').advListRotator({
+        helper: '#myHelperId',
+        rotationInterval: 2000,
+        effectTimer: 500,
+        effect: 'slide',
+        shuffle: true,
+        activeItemClass: 'myActiveItemClass',
+        randomEffect: true,
+        randomEffects: new Array('fade', 'blind'),
+        itemControl: {
+            itemIndex_0: {
+                rotationInterval: 500,
+                effect: 'fold'
+            },
+            itemIndex_1: {
+                effectTimer: 1500
+            }
+        }
+    });
+});</pre>
+
     </body>
 </html>
