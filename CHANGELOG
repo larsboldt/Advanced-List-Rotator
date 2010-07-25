@@ -4,7 +4,13 @@ New:
   effect. Requires jQuery UI. Refer to the jQuery UI documentation for easing
   names (http://jqueryui.com/demos/effect/#easing). You can also specify
   easing on an per item basis using itemControl which allows for different
-  easing on each item.
+  easing on each item. String value. Default: swing.
+- Added slideVertical in effectOptions which allows for a vertical slide instead
+  of horizontal. Boolean value. Default: false.
+
+Fixes:
+- Fixed slideBy value for itemControl, previously it would always pick the global
+  value, ignoring the value in itemControl.
 
 1.3
 New:

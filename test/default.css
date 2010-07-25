@@ -66,3 +66,13 @@ li.alrHelperActiveItem {
     float: left;
     margin-right: 40px;
 }
+#alr-test-slide-mask-vertical {
+    position: relative;
+    width: 100px;
+    height: 12px;
+    overflow: hidden;
+}
+#alr-test-slide-vertical {
+    position: absolute;
+    margin: 0;
+}

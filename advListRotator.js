@@ -246,9 +246,10 @@ var AdvancedListRotatorClass = {
             // Cancel all running animations on the listRotator obj
             c.$listRotator.stop();
             // Calculate the new position
-            var pos = '-' + c.currentItem*c.effectOptions.slideBy;
+            var pos = '-' + c.currentItem*c.getItemEffectSlideBy(c);
+            var animOpts = (c.getItemEffectSlideVertical(c)) ? {top: pos} : {left: pos};
             // Slide listRotator obj to the new position
-            c.$listRotator.animate({left: pos}, c.getItemEffectTimer(c), c.getItemEffectEasing(c, e), function() {
+            c.$listRotator.animate(animOpts, c.getItemEffectTimer(c), c.getItemEffectEasing(c, e), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
@@ -489,6 +490,16 @@ var AdvancedListRotatorClass = {
     getItemEffectEasing: function(c, e) {
         var opts = c.getItemEffectOptions(c);
         return (typeof(opts.easing) != 'undefined' && e.effect) ? opts.easing : 'swing';
+    },
+
+    getItemEffectSlideBy: function(c) {
+        var opts = c.getItemEffectOptions(c);
+        return (typeof(opts.slideBy) != 'undefined') ? opts.slideBy : 10;
+    },
+
+    getItemEffectSlideVertical: function(c) {
+        var opts = c.getItemEffectOptions(c);
+        return (typeof(opts.slideVertical) != 'undefined') ? opts.slideVertical : false;
     },
 
     getItemRotationInterval: function(c) {

@@ -47,8 +47,18 @@
                 });
                 $('#alr-test-slide').advListRotator({
                     effect: 'slide',
-                    effectOptions: {slideBy: 92, easing: 'easeInBack'},
+                    effectOptions: {
+                        slideBy: 92,
+                        easing: 'easeInBack'
+                    },
                     helper: '#alr-test-slide-helper'
+                });
+                $('#alr-test-slide-vertical').advListRotator({
+                    effect: 'slide',
+                    effectOptions: {
+                        slideBy: 14,
+                        slideVertical: true
+                    }
                 });
             });
         </script>
@@ -119,7 +129,7 @@
             <li>ListItem 4 (rInt 1250)</li>
             <li>ListItem 5 (rInt 1500)</li>
         </ul>
-        <h1>Advanced List Rotator Test - slide effect</h1>
+        <h1>Advanced List Rotator Test - Slide effect</h1>
         <p>Expected result: Standard rotation with slide effect and helper object</p>
         <div id="alr-test-slide-mask">
             <ul id="alr-test-slide">
@@ -137,5 +147,16 @@
             <li>HelperItem 4</li>
             <li>HelperItem 5</li>
         </ul>
+        <h1>Advanced List Rotator Test - Vertical slide effect</h1>
+        <p>Expected result: Standard rotation with vertical slide effect</p>
+        <div id="alr-test-slide-mask-vertical">
+            <ul id="alr-test-slide-vertical">
+                <li>ListItem 1</li>
+                <li>ListItem 2</li>
+                <li>ListItem 3</li>
+                <li>ListItem 4</li>
+                <li>ListItem 5</li>
+            </ul>
+        </div>
     </body>
 </html>
