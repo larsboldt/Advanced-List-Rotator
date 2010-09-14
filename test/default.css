@@ -40,13 +40,15 @@ li.alrHelperActiveItem {
 #alr-test-randomeffect li.alrActiveItem {
     z-index: 1;
 }
-#alr-test-manual-move-elements {
+#alr-test-manual-move-elements,
+#alr-test-start-stop-elements {
     list-style: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
 }
-#alr-test-manual-move-elements li {
+#alr-test-manual-move-elements li,
+#alr-test-start-stop-elements li {
     float: left;
     margin-right: 15px;
 }

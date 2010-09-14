@@ -7,6 +7,18 @@ New:
   easing on each item. String value. Default: swing.
 - Added slideVertical in effectOptions which allows for a vertical slide instead
   of horizontal. Boolean value. Default: false.
+- Added pauseOnInteraction (string, default false). If for example set to
+'mouseover' or 'click', rotation will pause when an item in the main rotation
+list receives the event.
+- Added startOnInteraction (string, default false). If for example set to
+'mouseout' the rotation will start again when an item in the main rotation list
+receives the event. To be used together with the pauseOnInteraction setting.
+- Added startRotationElement (default false) and
+startRotationElementInteraction (default 'click') which allows you to specify
+an element which should act as a start rotation "button".
+- Added stopRotationElement (default false) and
+stopRotationElementInteraction (default 'click') which allows you to specify
+an element which should act as a stop/pause rotation "button".
 
 Fixes:
 - Fixed slideBy value for itemControl, previously it would always pick the global

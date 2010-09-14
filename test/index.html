@@ -61,6 +61,15 @@
                         slideVertical: true
                     }
                 });
+                $('#alr-test-pause-on-hover').advListRotator({
+                    pauseOnInteraction: 'mouseover',
+                    startOnInteraction: 'mouseout'
+                });
+                $('#alr-test-start-stop').advListRotator({
+                    autoStart: false,
+                    startRotationElement: '#alrStart',
+                    stopRotationElement: '#alrStop'
+                });
             });
         </script>
     </head>
@@ -159,5 +168,27 @@
                 <li>ListItem 5</li>
             </ul>
         </div>
+        <h1>Advanced List Rotator Test - Start and stop/pause on interaction</h1>
+        <p>Expected result: Standard rotation. Should pause rotation if an item is hovered, should start again on mouseout.</p>
+        <ul id="alr-test-pause-on-hover">
+            <li>ListItem 1</li>
+            <li>ListItem 2</li>
+            <li>ListItem 3</li>
+            <li>ListItem 4</li>
+            <li>ListItem 5</li>
+        </ul>
+        <h1>Advanced List Rotator Test - Start and stop/pause rotation<a name="alr-start-stop"></a></h1>
+        <p>Expected result: Clicking on start should start rotation, clicking on stop should stop/pause rotation.</p>
+        <ul id="alr-test-start-stop">
+            <li>ListItem 1</li>
+            <li>ListItem 2</li>
+            <li>ListItem 3</li>
+            <li>ListItem 4</li>
+            <li>ListItem 5</li>
+        </ul>
+        <ul id="alr-test-start-stop-elements">
+            <li><a id="alrStart" href="#alr-start-stop">Start rotation</a></li>
+            <li><a id="alrStop" href="#alr-start-stop">Stop rotation</a></li>
+        </ul>
     </body>
 </html>

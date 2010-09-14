@@ -53,29 +53,35 @@ var AdvancedListRotatorClass = {
         var c = this;
         // Settings
         c.settings = jQuery.extend({
-                                    rotationInterval: 5000,
-                                    effectTimer: 1000,
-                                    effect: false,
-                                    effectOptions: {},
-                                    itemControl: {},
-                                    shuffle: false,
-                                    randomStart: false,
-                                    autoStart: true,
-                                    disableRotationEngine: false,
-                                    helper: false,
-                                    activeItemClass: 'alrActiveItem',
-                                    helperActiveItemClass: 'alrHelperActiveItem',
-                                    helperInteraction: 'mouseover',
-                                    startIndex: 0,
-                                    nextItemElement: false,
-                                    nextItemElementInteraction: 'click',
-                                    previousItemElement: false,
-                                    previousItemElementInteraction: 'click',
-                                    randomEffect: false,
-                                    randomEffects: new Array('blind', 'clip', 'explode', 'fade', 'fold'),
-                                    debug: false,
-                                    debugLevel: new Array('debug', 'info', 'warn', 'error')
-                                   }, c.settings, options);
+            rotationInterval: 5000,
+            effectTimer: 1000,
+            effect: false,
+            effectOptions: {},
+            itemControl: {},
+            shuffle: false,
+            randomStart: false,
+            autoStart: true,
+            disableRotationEngine: false,
+            pauseOnInteraction: false,
+            startOnInteraction: false,
+            helper: false,
+            activeItemClass: 'alrActiveItem',
+            helperActiveItemClass: 'alrHelperActiveItem',
+            helperInteraction: 'mouseover',
+            startIndex: 0,
+            stopRotationElement: false,
+            stopRotationElementInteraction: 'click',
+            startRotationElement: false,
+            startRotationElementInteraction: 'click',
+            nextItemElement: false,
+            nextItemElementInteraction: 'click',
+            previousItemElement: false,
+            previousItemElementInteraction: 'click',
+            randomEffect: false,
+            randomEffects: new Array('blind', 'clip', 'explode', 'fade', 'fold'),
+            debug: false,
+            debugLevel: new Array('debug', 'info', 'warn', 'error')
+        }, c.settings, options);
         // Effect options
         c.effectOptions = jQuery.extend({}, c.effectOptions, c.settings.effectOptions);
 
@@ -123,7 +129,23 @@ var AdvancedListRotatorClass = {
         c.currentEffect = c.getItemEffect(c);
         c.onInitItem(c);
 
-        // Loop all helper elements within the ul and bind mouseover/mouseout functionality to them
+        // Bind events to main list items
+        c.$listRotator.children().each(function() {
+            if (c.settings.pauseOnInteraction !== false) {
+                jQuery(this).bind(c.settings.pauseOnInteraction, function() {
+                    // Stop (pause) rotationEngine
+                    c.stopRotationEngine(c);
+                });
+            }
+            if (c.settings.startOnInteraction !== false) {
+                jQuery(this).bind(c.settings.startOnInteraction, function() {
+                    // Start rotationEngine
+                    c.startRotationEngine(c);
+                });
+            }
+        });
+
+        // Loop all helper elements within the ul and bind event functionality to them
         if (jQuery(c.settings.helper).length > 0) {
             jQuery(c.settings.helper).children().each(function() {
                 jQuery(this).bind(c.settings.helperInteraction, function() {
@@ -133,6 +155,20 @@ var AdvancedListRotatorClass = {
                     // Start rotationEngine
                     c.startRotationEngine(c);
                 });
+            });
+        }
+
+        // Bind functionality to startItemElement
+        if (jQuery(c.settings.startRotationElement).length > 0) {
+            jQuery(c.settings.startRotationElement).bind(c.settings.startRotationElementInteraction, function() {
+                c.startRotationEngine(c);
+            });
+        }
+
+        // Bind functionality to stopItemElement
+        if (jQuery(c.settings.stopRotationElement).length > 0) {
+            jQuery(c.settings.stopRotationElement).bind(c.settings.stopRotationElementInteraction, function() {
+                c.stopRotationEngine(c);
             });
         }
 
@@ -247,7 +283,11 @@ var AdvancedListRotatorClass = {
             c.$listRotator.stop();
             // Calculate the new position
             var pos = '-' + c.currentItem*c.getItemEffectSlideBy(c);
-            var animOpts = (c.getItemEffectSlideVertical(c)) ? {top: pos} : {left: pos};
+            var animOpts = (c.getItemEffectSlideVertical(c)) ? {
+                top: pos
+            } : {
+                left: pos
+            };
             // Slide listRotator obj to the new position
             c.$listRotator.animate(animOpts, c.getItemEffectTimer(c), c.getItemEffectEasing(c, e), function() {
                 // Animation done, reset animationRunning flag
@@ -333,7 +373,9 @@ var AdvancedListRotatorClass = {
         // Start rotationEngine as long as disableRotationEngine is false
         if (! c.settings.disableRotationEngine) {
             var rInt = c.getItemRotationInterval(c);
-            c.tId = setInterval(function() {c.rotationEngine(c)}, rInt);
+            c.tId = setInterval(function() {
+                c.rotationEngine(c)
+                }, rInt);
             // Debug?
             if (c.settings.debug && c.in_array('info', c.settings.debugLevel)) {
                 console.info('startRotationEngine: Rotation Engine started; interval ' + rInt + '; currentItem ' + c.currentItem);
