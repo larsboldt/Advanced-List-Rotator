@@ -7,8 +7,8 @@ New:
   easing on each item. String value. Default: swing.
 - Added slideVertical in effectOptions which allows for a vertical slide instead
   of horizontal. Boolean value. Default: false.
-- Added pauseOnInteraction (string, default false). If for example set to
-'mouseover' or 'click', rotation will pause when an item in the main rotation
+- Added stopOnInteraction (string, default false). If for example set to
+'mouseover' or 'click', rotation will stop/pause when an item in the main rotation
 list receives the event.
 - Added startOnInteraction (string, default false). If for example set to
 'mouseout' the rotation will start again when an item in the main rotation list

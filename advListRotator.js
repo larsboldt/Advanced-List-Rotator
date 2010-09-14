@@ -62,7 +62,7 @@ var AdvancedListRotatorClass = {
             randomStart: false,
             autoStart: true,
             disableRotationEngine: false,
-            pauseOnInteraction: false,
+            stopOnInteraction: false,
             startOnInteraction: false,
             helper: false,
             activeItemClass: 'alrActiveItem',
@@ -131,8 +131,8 @@ var AdvancedListRotatorClass = {
 
         // Bind events to main list items
         c.$listRotator.children().each(function() {
-            if (c.settings.pauseOnInteraction !== false) {
-                jQuery(this).bind(c.settings.pauseOnInteraction, function() {
+            if (c.settings.stopOnInteraction !== false) {
+                jQuery(this).bind(c.settings.stopOnInteraction, function() {
                     // Stop (pause) rotationEngine
                     c.stopRotationEngine(c);
                 });
