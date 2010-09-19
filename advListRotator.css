@@ -1,0 +1,12 @@
+
+/* Advanced List Rotatot Effect: slice */
+.alrEffectSlice {
+    z-index: 2;
+}
+.alrEffectSliceContent {
+    position: relative;
+}
+.alrEffectSliceWrapper {
+    position: absolute;
+    overflow: hidden;
+}
