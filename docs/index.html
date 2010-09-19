@@ -79,7 +79,7 @@
                 You can override this with your own array of debugLevels</li>
             <li><strong>itemControl (JSON object)</strong><br />
                 Default: none<br />
-                Lets you specify rotationInterval, effect, effectTimer, effectOptions, randomEffect and randomEffects on an per item basis. Each item is specified with itemIndex_n where n is the item index, which is zero based. See below for example.</li>
+                Lets you specify rotationInterval, effect, effectTimer, effectOptions, randomEffect and randomEffects on an per item basis. Each item is specified with listIndex_n where n is the list index, which is zero based. See below for example.</li>
         </ul>
         <p>Option example (shows how to use settings, actual setting combination might not work):</p>
         <pre class="brush:javascript">jQuery(document).ready(function($) {
@@ -94,11 +94,11 @@
         randomEffect: true,
         randomEffects: new Array('fade', 'blind'),
         itemControl: {
-            itemIndex_0: {
+            listIndex_0: {
                 rotationInterval: 500,
                 effect: 'fold'
             },
-            itemIndex_1: {
+            listIndex_1: {
                 effectTimer: 1500
             }
         }
