@@ -297,38 +297,6 @@ var AdvancedListRotatorClass = {
                     c.continueRotation(c);
                 }
             });
-        } else if (c.currentEffect == 'slice') {
-            obj.show();
-
-            var objWidth    = obj.width();
-            var objHeight   = obj.height();
-            var sliceSize   = c.getItemEffectOption(c, 'sliceCount', 10);
-            var sliceWidth  = Math.round(objWidth/sliceSize);
-            var sliceHeight = Math.round(objHeight/sliceSize);
-
-            c.$listRotator.append('<li class="alrEffectSlice"><div class="alrEffectSliceContent"></div></li>');
-            for (var j=0; j < objWidth; j+=sliceWidth) {
-                jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + objHeight + 'px; left: ' + j + 'px; width:' + (sliceWidth) + 'px;"><div style="height: 0; margin-left: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
-            }
-            jQuery('.alrEffectSliceA').css('opacity', 0);
-            jQuery('.alrEffectSliceA').show();
-
-
-            var a = new Array();
-            jQuery('.alrEffectSliceA').each(function() {
-                a.push(jQuery(this));
-            });
-
-            var o = {
-                opacity: 1,
-                height: [objHeight + 'px', c.getItemEffectEasing(c, e)]
-            };
-
-            c.alrEffectSlice(c, e, runCallback, a, o,
-                             c.getItemEffectTimer(c),
-                             c.getItemEffectOption(c, 'sliceSpeed', 100),
-                             c.getItemEffectOption(c, 'sliceReverse', false));
-
         } else if (e.effect && c.currentEffect != 'fade' && c.currentEffect !== false) {
             obj.show();
             e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectTimer(c), function() {
@@ -407,7 +375,7 @@ var AdvancedListRotatorClass = {
             var rInt = c.getItemRotationInterval(c);
             c.tId = setInterval(function() {
                 c.rotationEngine(c)
-            }, rInt);
+                }, rInt);
             // Debug?
             if (c.settings.debug && c.in_array('info', c.settings.debugLevel)) {
                 console.info('startRotationEngine: Rotation Engine started; interval ' + rInt + '; currentItem ' + c.currentItem);
@@ -571,11 +539,6 @@ var AdvancedListRotatorClass = {
         return (typeof(opts.slideBy) != 'undefined') ? opts.slideBy : 10;
     },
 
-    getItemEffectOption: function(c, o, d) {
-        var opts = c.getItemEffectOptions(c);
-        return (typeof(opts[o]) != 'undefined') ? opts[o] : d;
-    },
-
     getItemEffectSlideVertical: function(c) {
         var opts = c.getItemEffectOptions(c);
         return (typeof(opts.slideVertical) != 'undefined') ? opts.slideVertical : false;
@@ -630,7 +593,7 @@ var AdvancedListRotatorClass = {
         if (obj) {
             switch (c.currentEffect) {
                 case 'slide':
-                    var pos = '-' + c.currentItem*c.getItemEffectSlideBy(c);
+                    var pos = '-' + c.currentItem*c.effectOptions.slideBy;
                     c.$listRotator.css('left', pos);
                     break;
                 case 'blind':
@@ -689,43 +652,5 @@ var AdvancedListRotatorClass = {
             // Add active class
             obj.addClass(c.settings.activeItemClass);
         }
-    },
-
-    alrEffectSlice: function(c, e, p, a, o, s, t, r) {
-        var i = (!r) ? 0 : a.length-1;
-        var j = 0;
-        var eInt = setInterval(function() {
-            if (!r) {
-                if (i >= a.length) {
-                    clearInterval(eInt);
-                    return;
-                }
-            } else {
-                if (i < 0) {
-                    clearInterval(eInt);
-                    return;
-                }
-            }
-            if (typeof(a[i]) != 'undefined') {
-                a[i].animate(o, s, function() {
-                    if (j >= a.length-1) {
-                        // Stop interval
-                        clearInterval(eInt);
-                        // Animation done, reset animationRunning flag
-                        c.animationRunning = false;
-                        // Hide previous element
-                        e.hide();
-                        // Remove effect
-                        jQuery('.alrEffectSlice').remove();
-                        // Run callback?
-                        if (p) {
-                            c.continueRotation(c);
-                        }
-                    }
-                    j++
-                });
-            }
-            i = (!r) ? i+=1 : i-=1;
-        }, t);
     }
 }
