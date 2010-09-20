@@ -69,6 +69,8 @@ var AdvancedListRotatorClass = {
             helperActiveItemClass: 'alrHelperActiveItem',
             helperInteraction: 'mouseover',
             startIndex: 0,
+            currentItemElement: false,
+            totalItemsElement: false,
             stopRotationElement: false,
             stopRotationElementInteraction: 'click',
             startRotationElement: false,
@@ -107,6 +109,8 @@ var AdvancedListRotatorClass = {
         c.calculateNextItem = true;
         // Is animation running
         c.animationRunning = false;
+        // Rotation
+        c.rotation = false;
         // Random start
         if (c.settings.randomStart) {
             c.currentItem = c.random(c.totalItems);
@@ -161,6 +165,7 @@ var AdvancedListRotatorClass = {
         // Bind functionality to startItemElement
         if (jQuery(c.settings.startRotationElement).length > 0) {
             jQuery(c.settings.startRotationElement).bind(c.settings.startRotationElementInteraction, function() {
+                c.rotation = true;
                 c.startRotationEngine(c);
             });
         }
@@ -168,6 +173,7 @@ var AdvancedListRotatorClass = {
         // Bind functionality to stopItemElement
         if (jQuery(c.settings.stopRotationElement).length > 0) {
             jQuery(c.settings.stopRotationElement).bind(c.settings.stopRotationElementInteraction, function() {
+                c.rotation = false;
                 c.stopRotationEngine(c);
             });
         }
@@ -186,8 +192,12 @@ var AdvancedListRotatorClass = {
             });
         }
 
+        // update labels
+        c.updateLabels(c);
+
         // Start rotationEngine if autoStart is true
         if (c.settings.autoStart) {
+            c.rotation = true;
             c.startRotationEngine(c);
         }
     },
@@ -257,8 +267,11 @@ var AdvancedListRotatorClass = {
         // Reset item index calculation
         c.calculateNextItem = true;
 
+        // update labels
+        c.updateLabels(c);
+
         // Run effect
-        c.runEffect(c, e, true);
+        c.runEffect(c, e, c.rotation);
     },
 
     continueRotation: function(c) {
@@ -267,7 +280,7 @@ var AdvancedListRotatorClass = {
             // Set item classes
             c.setItemClass(c);
             // Start rotationEngine
-            this.startRotationEngine(c);
+            c.startRotationEngine(c);
         }
     },
 
@@ -282,14 +295,14 @@ var AdvancedListRotatorClass = {
             // Cancel all running animations on the listRotator obj
             c.$listRotator.stop();
             // Calculate the new position
-            var pos = '-' + c.currentItem*c.getItemEffectSlideBy(c);
-            var animOpts = (c.getItemEffectSlideVertical(c)) ? {
+            var pos = '-' + c.currentItem*c.getItemEffectOption(c, 'slideBy', 10);
+            var animOpts = (c.getItemEffectOption(c, 'slideVertical', false)) ? {
                 top: pos
             } : {
                 left: pos
             };
             // Slide listRotator obj to the new position
-            c.$listRotator.animate(animOpts, c.getItemEffectTimer(c), c.getItemEffectEasing(c, e), function() {
+            c.$listRotator.animate(animOpts, c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), c.getItemEffectEasing(c, e), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
@@ -379,13 +392,13 @@ var AdvancedListRotatorClass = {
             });
 
             c.alrArrayAnimate(c, e, runCallback, a, o,
-                c.getItemEffectTimer(c),
+                c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer),
                 c.getItemEffectOption(c, 'sliceSpeed', 100),
                 c.getItemEffectOption(c, 'sliceReverse', false));
 
         } else if (e.effect && c.currentEffect != 'fade' && c.currentEffect !== false) {
             obj.show();
-            e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectTimer(c), function() {
+            e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), function() {
                 // Hide item
                 e.hide();
                 // Animation done, reset animationRunning flag
@@ -397,13 +410,14 @@ var AdvancedListRotatorClass = {
             });
         } else if (c.currentEffect == 'fade') {
             obj.css('opacity', 0).css('zIndex', 2).show();
-            obj.animate({'opacity': 1}, c.getItemEffectTimer(c), function() {
+            obj.animate({'opacity': 1}, c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), function() {
                 // Animation done, reset animationRunning flag
                 c.animationRunning = false;
                 // Run callback?
                 if (runCallback) {
                     c.continueRotation(c);
                 }
+                obj.css('zIndex', 0);
             });
         } else {
             // Debug?
@@ -458,7 +472,7 @@ var AdvancedListRotatorClass = {
         c.stopRotationEngine(c);
         // Start rotationEngine as long as disableRotationEngine is false
         if (! c.settings.disableRotationEngine) {
-            var rInt = c.getItemRotationInterval(c);
+            var rInt = c.getItemOption(c, 'rotationInterval', c.settings.rotationInterval);
             c.tId = setInterval(function() {
                 c.rotationEngine(c)
             }, rInt);
@@ -599,14 +613,6 @@ var AdvancedListRotatorClass = {
         return c.getRandomEffect(c);
     },
 
-    getItemEffectTimer: function(c) {
-        var obj = c.getItemObj(c);
-        if (obj !== false) {
-            return (typeof(obj.effectTimer) == 'undefined') ? c.settings.effectTimer : obj.effectTimer;
-        }
-        return c.settings.effectTimer;
-    },
-
     getItemEffectOptions: function(c) {
         var obj = c.getItemObj(c);
         if (obj !== false) {
@@ -620,27 +626,17 @@ var AdvancedListRotatorClass = {
         return (typeof(opts.easing) != 'undefined' && e.effect) ? opts.easing : 'swing';
     },
 
-    getItemEffectSlideBy: function(c) {
-        var opts = c.getItemEffectOptions(c);
-        return (typeof(opts.slideBy) != 'undefined') ? opts.slideBy : 10;
+    getItemOption: function(c, o, d) {
+        var obj = c.getItemObj(c);
+        if (obj !== false) {
+            return (typeof(obj[o]) != 'undefined') ? obj[o] : d;
+        }
+        return d;
     },
 
     getItemEffectOption: function(c, o, d) {
         var opts = c.getItemEffectOptions(c);
         return (typeof(opts[o]) != 'undefined') ? opts[o] : d;
-    },
-
-    getItemEffectSlideVertical: function(c) {
-        var opts = c.getItemEffectOptions(c);
-        return (typeof(opts.slideVertical) != 'undefined') ? opts.slideVertical : false;
-    },
-
-    getItemRotationInterval: function(c) {
-        var obj = c.getItemObj(c);
-        if (obj !== false) {
-            return (typeof(obj.rotationInterval) == 'undefined') ? c.settings.rotationInterval : obj.rotationInterval;
-        }
-        return c.settings.rotationInterval;
     },
 
     getRandomEffect: function(c) {
@@ -684,7 +680,7 @@ var AdvancedListRotatorClass = {
         if (obj) {
             switch (c.currentEffect) {
                 case 'slide':
-                    var pos = '-' + c.currentItem*c.getItemEffectSlideBy(c);
+                    var pos = '-' + c.currentItem*c.getItemEffectOption(c, 'slideBy', 10);
                     c.$listRotator.css('left', pos);
                     break;
                 case 'blind':
@@ -773,5 +769,14 @@ var AdvancedListRotatorClass = {
             });
             i = (!r) ? i+=1 : i-=1;
         }, t);
+    },
+
+    updateLabels: function(c) {
+        if (c.settings.currentItemElement !== false) {
+            jQuery(c.settings.currentItemElement).html(c.currentItem+1);
+        }
+        if (c.settings.totalItemsElement !== false) {
+            jQuery(c.settings.totalItemsElement).html(c.totalItems);
+        }
     }
 }

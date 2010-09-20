@@ -19,10 +19,15 @@ an element which should act as a start rotation "button".
 - Added stopRotationElement (default false) and
 stopRotationElementInteraction (default 'click') which allows you to specify
 an element which should act as a stop/pause rotation "button".
+- Added currentItemElement option whose html will be updated with the current
+active list item number. Span tags are great for this.
+- Added totalItemsElement option whose html will be updated with the total
+number of list items. Span tags are great for this.
 
 Fixes:
 - Fixed slideBy value for itemControl, previously it would always pick the global
   value, ignoring the value in itemControl.
+- Code cleanup
 
 1.3
 New:
