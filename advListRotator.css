@@ -1,7 +1,21 @@
+/* Advanced List Rotator Inactive */
+.alrInactive {
+    z-index: 0;
+}
+
+/* Advanced List Rotator Inactive */
+.alrActive {
+    z-index: 1;
+}
+
+/* Advanced List Rotator Effect */
+.alrEffect {
+    z-index: 2;
+}
 
 /* Advanced List Rotator Effect: slice */
 .alrEffectSlice {
-    z-index: 2;
+    z-index: 3;
 }
 .alrEffectSliceContent {
     position: relative;

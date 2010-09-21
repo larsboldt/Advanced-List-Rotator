@@ -285,153 +285,30 @@ var AdvancedListRotatorClass = {
     },
 
     runEffect: function(c, e, runCallback) {
-        // Get obj based on currentItem
-        var obj = c.getCurrentItemObj(c);
         // Set animationRunning flag to true
         c.animationRunning = true;
-        // Make sure jQuery UI is installed before running UI effects, if fade effect or UI isn't installed, run the standard fadeOut effect
+        // Make sure jQuery UI is installed before running UI effects, fallback is no effect
         c.currentEffect = c.getItemEffect(c);
-        if (c.currentEffect == 'slide') {
-            // Cancel all running animations on the listRotator obj
-            c.$listRotator.stop();
-            // Calculate the new position
-            var pos = '-' + c.currentItem*c.getItemEffectOption(c, 'slideBy', 10);
-            var animOpts = (c.getItemEffectOption(c, 'slideVertical', false)) ? {
-                top: pos
-            } : {
-                left: pos
-            };
-            // Slide listRotator obj to the new position
-            c.$listRotator.animate(animOpts, c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), c.getItemEffectEasing(c, e), function() {
-                // Animation done, reset animationRunning flag
-                c.animationRunning = false;
-                // Run callback?
-                if (runCallback) {
-                    c.continueRotation(c);
+
+        c.$listRotator.children().removeClass('alrInactive').removeClass('alrEffect');
+        c.$listRotator.children().addClass('alrInactive');
+
+        switch (c.currentEffect) {
+            case 'slide':
+                c.effectSlide(c, e, runCallback);
+                break;
+            case 'slice':
+                c.effectSlice(c, e, runCallback);
+                break;
+            case 'fade':
+                c.effectFade(c, e, runCallback);
+                break;
+            default:
+                if (e.effect && c.currentEffect !== false) {
+                    c.effectUI(c, e, runCallback);
+                } else {
+                    c.effectNone(c, e, runCallback);
                 }
-            });
-        } else if (c.currentEffect == 'slice') {
-            obj.show();
-
-            var objWidth       = obj.width();
-            var objHeight      = obj.height();
-            var sliceCount     = c.getItemEffectOption(c, 'sliceCount', 10);
-            var sliceWidth     = Math.round(objWidth/sliceCount);
-            var sliceHeight    = Math.round(objHeight/sliceCount);
-            var sliceDirection = c.getItemEffectOption(c, 'sliceDirection', 'bottom');
-            var o              = {};
-            var sliceInc       = 0;
-            var sliceSize      = 0;
-
-            // Add the li element which will hold the slices
-            c.$listRotator.append('<li class="alrEffectSlice"><div class="alrEffectSliceContent"></div></li>');
-
-            switch (sliceDirection) {
-                case 'bottom':
-                case 'top':
-                    sliceInc  = sliceWidth;
-                    sliceSize = objWidth;
-                    break;
-                case 'left':
-                case 'right':
-                    sliceInc  = sliceHeight;
-                    sliceSize = objHeight;
-                    break;
-            }
-
-            for (var j=0; j < sliceSize; j+=sliceInc) {
-                switch (sliceDirection) {
-                    case 'bottom':
-                        jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + objHeight + 'px; left: ' + j + 'px; width:' + sliceWidth + 'px;"><div style="height: 0; margin-left: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
-                        break;
-                    case 'top':
-                        jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + objHeight + 'px; left: ' + j + 'px; width:' + sliceWidth + 'px;"><div style="margin-top: '+ objHeight + 'px; margin-left: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
-                        break;
-                    case 'left':
-                        jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + sliceHeight + 'px; top: ' + j + 'px; width:' + objWidth + 'px;"><div style="width: 0; margin-top: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
-                        break;
-                    case 'right':
-                        jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + sliceHeight + 'px; top: ' + j + 'px; width:' + objWidth + 'px;"><div style="margin-left: '+ objWidth +'px; margin-top: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
-                        break;
-                }
-            }
-
-            jQuery('.alrEffectSliceA').css('opacity', 0);
-            jQuery('.alrEffectSliceA').show();
-
-            switch (sliceDirection) {
-                case 'bottom':
-                    o = {
-                        opacity: 1,
-                        height: [objHeight + 'px', c.getItemEffectEasing(c, e)]
-                    };
-                    break;
-                case 'top':
-                    o = {
-                        opacity: 1,
-                        marginTop: ['0px', c.getItemEffectEasing(c, e)]
-                    };
-                    break;
-                case 'left':
-                    o = {
-                        opacity: 1,
-                        width: [objWidth + 'px', c.getItemEffectEasing(c, e)]
-                    };
-                    break;
-                case 'right':
-                    o = {
-                        opacity: 1,
-                        marginLeft: ['0px', c.getItemEffectEasing(c, e)]
-                    };
-                    break;
-            }
-
-            var a = new Array();
-            jQuery('.alrEffectSliceA').each(function() {
-                a.push(jQuery(this));
-            });
-
-            c.alrArrayAnimate(c, e, runCallback, a, o,
-                c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer),
-                c.getItemEffectOption(c, 'sliceSpeed', 100),
-                c.getItemEffectOption(c, 'sliceReverse', false));
-
-        } else if (e.effect && c.currentEffect != 'fade' && c.currentEffect !== false) {
-            obj.show();
-            e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), function() {
-                // Hide item
-                e.hide();
-                // Animation done, reset animationRunning flag
-                c.animationRunning = false;
-                // Run callback?
-                if (runCallback) {
-                    c.continueRotation(c);
-                }
-            });
-        } else if (c.currentEffect == 'fade') {
-            obj.css('opacity', 0).css('zIndex', 2).show();
-            obj.animate({'opacity': 1}, c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), function() {
-                // Animation done, reset animationRunning flag
-                c.animationRunning = false;
-                // Run callback?
-                if (runCallback) {
-                    c.continueRotation(c);
-                }
-                obj.css('zIndex', 0);
-            });
-        } else {
-            // Debug?
-            if (c.settings.debug) {
-                if (c.currentEffect !== false) {
-                    console.debug('runEffect: Missing jQuery UI effects; Cannot run ' + c.currentEffect + '; Using none');
-                }
-            }
-            // Animation done, reset animationRunning flag
-            c.animationRunning = false;
-            // Run callback?
-            if (runCallback) {
-                c.continueRotation(c);
-            }
         }
     },
 
@@ -683,12 +560,6 @@ var AdvancedListRotatorClass = {
                     var pos = '-' + c.currentItem*c.getItemEffectOption(c, 'slideBy', 10);
                     c.$listRotator.css('left', pos);
                     break;
-                case 'blind':
-                case 'clip':
-                case 'explode':
-                case 'fold':
-                    obj.show();
-                    break;
             }
             // Add active class
             obj.addClass(c.settings.activeItemClass);
@@ -698,6 +569,7 @@ var AdvancedListRotatorClass = {
     },
 
     onBeforeShowItem: function(c) {
+    /*
         switch (c.currentEffect) {
             case 'blind':
             case 'clip':
@@ -705,7 +577,7 @@ var AdvancedListRotatorClass = {
             case 'fold':
                 c.$listRotator.children().hide();
                 break;
-        }
+        }*/
     },
 
     onShowItem: function(c) {
@@ -713,12 +585,13 @@ var AdvancedListRotatorClass = {
         var obj = c.getCurrentItemObj(c);
         if (obj) {
             switch (c.currentEffect) {
-                case 'fade':
-                    // Stop any ongoing animations
-                    obj.stop();                    
-                    break;
                 case 'slide':
                     c.runEffect(c, obj, false);
+                    break;
+                /*
+                case 'fade':
+                    // Stop any ongoing animations
+                    obj.stop();
                     break;
                 case 'blind':
                 case 'clip':
@@ -728,7 +601,7 @@ var AdvancedListRotatorClass = {
                     obj.stop();
                     // Show element
                     obj.show();
-                    break;
+                    break;*/
             }
             // Add active class
             obj.addClass(c.settings.activeItemClass);
@@ -764,6 +637,10 @@ var AdvancedListRotatorClass = {
                     if (p) {
                         c.continueRotation(c);
                     }
+
+                    c.$listRotator.children().removeClass('alrActive');
+                    var obj = c.getCurrentItemObj(c);
+                    obj.removeClass('alrInactive').addClass('alrActive');
                 }
                 j++
             });
@@ -777,6 +654,166 @@ var AdvancedListRotatorClass = {
         }
         if (c.settings.totalItemsElement !== false) {
             jQuery(c.settings.totalItemsElement).html(c.totalItems);
+        }
+    },
+
+    effectFade: function(c, e, runCallback) {
+        var obj = c.getCurrentItemObj(c);
+
+        obj.css('opacity', 0).addClass('alrEffect').show();
+
+        obj.animate({
+            'opacity': 1
+        }, c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), function() {
+            // Animation done, reset animationRunning flag
+            c.animationRunning = false;
+            // Run callback?
+            if (runCallback) {
+                c.continueRotation(c);
+            }
+            c.$listRotator.children().removeClass('alrActive');
+            obj.removeClass('alrEffect').addClass('alrActive');
+        });
+    },
+
+    effectSlide: function(c, e, runCallback) {
+        // Cancel all running animations on the listRotator obj
+        c.$listRotator.stop();
+        // Calculate the new position
+        var pos = '-' + c.currentItem*c.getItemEffectOption(c, 'slideBy', 10);
+        var animOpts = (c.getItemEffectOption(c, 'slideVertical', false)) ? {
+            top: pos
+        } : {
+            left: pos
+        };
+        // Slide listRotator obj to the new position
+        c.$listRotator.animate(animOpts, c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), c.getItemEffectEasing(c, e), function() {
+            // Animation done, reset animationRunning flag
+            c.animationRunning = false;
+            // Run callback?
+            if (runCallback) {
+                c.continueRotation(c);
+            }
+        });
+    },
+
+    effectSlice: function(c, e, runCallback) {
+        var obj = c.getCurrentItemObj(c);
+        
+        obj.show();
+
+        var objWidth       = obj.width();
+        var objHeight      = obj.height();
+        var sliceCount     = c.getItemEffectOption(c, 'sliceCount', 10);
+        var sliceWidth     = Math.round(objWidth/sliceCount);
+        var sliceHeight    = Math.round(objHeight/sliceCount);
+        var sliceDirection = c.getItemEffectOption(c, 'sliceDirection', 'bottom');
+        var o              = {};
+        var sliceInc       = 0;
+        var sliceSize      = 0;
+
+        // Add the li element which will hold the slices
+        c.$listRotator.append('<li class="alrEffectSlice"><div class="alrEffectSliceContent"></div></li>');
+
+        switch (sliceDirection) {
+            case 'bottom':
+            case 'top':
+                sliceInc  = sliceWidth;
+                sliceSize = objWidth;
+                break;
+            case 'left':
+            case 'right':
+                sliceInc  = sliceHeight;
+                sliceSize = objHeight;
+                break;
+        }
+
+        for (var j=0; j < sliceSize; j+=sliceInc) {
+            switch (sliceDirection) {
+                case 'bottom':
+                    jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + objHeight + 'px; left: ' + j + 'px; width:' + sliceWidth + 'px;"><div style="height: 0; margin-left: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
+                    break;
+                case 'top':
+                    jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + objHeight + 'px; left: ' + j + 'px; width:' + sliceWidth + 'px;"><div style="margin-top: '+ objHeight + 'px; margin-left: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
+                    break;
+                case 'left':
+                    jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + sliceHeight + 'px; top: ' + j + 'px; width:' + objWidth + 'px;"><div style="width: 0; margin-top: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
+                    break;
+                case 'right':
+                    jQuery('.alrEffectSliceContent').append('<div class="alrEffectSliceWrapper" style="height: ' + sliceHeight + 'px; top: ' + j + 'px; width:' + objWidth + 'px;"><div style="margin-left: '+ objWidth +'px; margin-top: -' + j + 'px;" class="alrEffectSliceA">' + obj.html() + '</div></div>');
+                    break;
+            }
+        }
+
+        jQuery('.alrEffectSliceA').css('opacity', 0);
+        jQuery('.alrEffectSliceA').show();
+
+        switch (sliceDirection) {
+            case 'bottom':
+                o = {
+                    opacity: 1,
+                    height: [objHeight + 'px', c.getItemEffectEasing(c, e)]
+                };
+                break;
+            case 'top':
+                o = {
+                    opacity: 1,
+                    marginTop: ['0px', c.getItemEffectEasing(c, e)]
+                };
+                break;
+            case 'left':
+                o = {
+                    opacity: 1,
+                    width: [objWidth + 'px', c.getItemEffectEasing(c, e)]
+                };
+                break;
+            case 'right':
+                o = {
+                    opacity: 1,
+                    marginLeft: ['0px', c.getItemEffectEasing(c, e)]
+                };
+                break;
+        }
+
+        var a = new Array();
+        jQuery('.alrEffectSliceA').each(function() {
+            a.push(jQuery(this));
+        });
+
+        c.alrArrayAnimate(c, e, runCallback, a, o,
+            c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer),
+            c.getItemEffectOption(c, 'sliceSpeed', 100),
+            c.getItemEffectOption(c, 'sliceReverse', false));
+    },
+
+    effectUI: function(c, e, runCallback) {
+        var obj = c.getCurrentItemObj(c);
+        
+        obj.show();
+        e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), function() {
+            // Hide item
+            e.hide();
+            // Animation done, reset animationRunning flag
+            c.animationRunning = false;
+            // Run callback?
+            if (runCallback) {
+                c.continueRotation(c);
+            }
+        });
+    },
+
+    effectNone: function(c, e, runCallback) {
+        // Debug?
+        if (c.settings.debug) {
+            if (c.currentEffect !== false) {
+                console.debug('runEffect: Missing jQuery UI effects; Cannot run ' + c.currentEffect + '; Using none');
+            }
+        }
+        // Animation done, reset animationRunning flag
+        c.animationRunning = false;
+        // Run callback?
+        if (runCallback) {
+            c.continueRotation(c);
         }
     }
 }
