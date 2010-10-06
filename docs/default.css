@@ -4,6 +4,7 @@ body {
     font-family: arial;
     font-size: 12px;
     color: #333;
+    line-height: 18px;
 }
 h1,h2,h3,h4,h5,h6 {
     font-family: Georgia;
@@ -20,4 +21,42 @@ a:visited {
 }
 a:hover {
     text-decoration: underline;
+}
+#options {
+    width: 920px;
+    border: none;
+    border-style: none;
+    border-style-inner: none;
+}
+#options th {
+    text-align: left;
+}
+#options th.option {
+    width: 200px;
+}
+#options th.type {
+    width: 120px;
+}
+#options th.accepts,
+#options th.default {
+    width: 150px;
+}
+#options th.description {
+    width: 300px;
+}
+#options th,
+#options td {
+    padding: 5px;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
+#options tr.last td {
+    border-bottom: 1px solid #ccc;
+}
+#options th.description,
+#options td.last {
+    border-right: 1px solid #ccc;
+}
+#options tr.odd {
+    background-color: #eaeaea;
 }
