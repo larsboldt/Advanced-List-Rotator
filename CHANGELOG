@@ -1,5 +1,6 @@
-1.4
+1.4 RC1
 New:
+- Added slice effect
 - Added easing in effectOptions which allows you to specify easing for the slide
   effect. Requires jQuery UI. Refer to the jQuery UI documentation for easing
   names (http://jqueryui.com/demos/effect/#easing). You can also specify

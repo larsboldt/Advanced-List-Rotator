@@ -23,8 +23,8 @@ if (typeof Object.create !== 'function') {
 /* Advanced List Rotator
  * Copyright (c) 2010 Lars Boldt (larsboldt.com)
  * E-mail: boldt.lars@gmail.com
- * Version: 1.4
- * Released: -
+ * Version: 1.4 RC1
+ * Released: 16.10.2010
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -641,6 +641,7 @@ var AdvancedListRotatorClass = {
                     c.$listRotator.children().removeClass('alrActive');
                     var obj = c.getCurrentItemObj(c);
                     obj.removeClass('alrInactive').addClass('alrActive');
+                    c.showNoAnimationContent(c, obj);
                 }
                 j++
             });
@@ -659,7 +660,7 @@ var AdvancedListRotatorClass = {
 
     effectFade: function(c, e, runCallback) {
         var obj = c.getCurrentItemObj(c);
-
+        c.hideNoAnimationContent(c, obj);
         obj.css('opacity', 0).addClass('alrEffect').show();
 
         obj.animate({
@@ -673,6 +674,7 @@ var AdvancedListRotatorClass = {
             }
             c.$listRotator.children().removeClass('alrActive');
             obj.removeClass('alrEffect').addClass('alrActive');
+            c.showNoAnimationContent(c, obj);
         });
     },
 
@@ -698,9 +700,9 @@ var AdvancedListRotatorClass = {
     },
 
     effectSlice: function(c, e, runCallback) {
-        var obj = c.getCurrentItemObj(c);
-        
+        var obj = c.getCurrentItemObj(c);        
         obj.show();
+        c.hideNoAnimationContent(c, obj);
 
         var objWidth       = obj.width();
         var objHeight      = obj.height();
@@ -787,15 +789,17 @@ var AdvancedListRotatorClass = {
     },
 
     effectUI: function(c, e, runCallback) {
-        var obj = c.getCurrentItemObj(c);
-        
+        var obj = c.getCurrentItemObj(c);        
         obj.show();
+        c.hideNoAnimationContent(c, obj);
+
         e.effect(c.currentEffect, c.getItemEffectOptions(c), c.getItemEffectOption(c, 'effectTimer', c.settings.effectTimer), function() {
             // Hide item
             e.hide();
             // Animation done, reset animationRunning flag
             c.animationRunning = false;
             // Run callback?
+            c.showNoAnimationContent(c, obj);
             if (runCallback) {
                 c.continueRotation(c);
             }
@@ -815,5 +819,13 @@ var AdvancedListRotatorClass = {
         if (runCallback) {
             c.continueRotation(c);
         }
+    },
+
+    hideNoAnimationContent: function(c, obj) {
+        obj.find('.alrNoAnimation').hide();
+    },
+
+    showNoAnimationContent: function(c, obj) {
+        obj.find('.alrNoAnimation').fadeIn(300);
     }
 }

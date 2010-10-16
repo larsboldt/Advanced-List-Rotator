@@ -178,6 +178,7 @@
                 </tr>
             </tbody>
         </table>
+        <p>If you experience weird "effects" when an animation occurs, it might be because of text labels or other content that "crash" during animation. One way to "fix" this is to add a class called "alrNoAnimation" on objects that doesn't need to be animated, image labels can be an example of this. Objects with the class "alrNoAnimation" are hidden until the animation are done and then faded in quickly.</p>
         <p>Option example (shows how to use settings, actual setting combination might not work):</p>
         <pre class="brush:javascript">jQuery(document).ready(function($) {
     $('.myList').advListRotator({
