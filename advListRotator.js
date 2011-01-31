@@ -65,7 +65,7 @@ var AdvancedListRotatorClass = {
             stopOnInteraction: false,
             startOnInteraction: false,
             helper: false,
-            activeItemClass: 'alrActiveItem',
+            activeItemClass: 'alrActive',
             helperActiveItemClass: 'alrHelperActiveItem',
             helperInteraction: 'mouseover',
             startIndex: 0,
@@ -82,7 +82,8 @@ var AdvancedListRotatorClass = {
             randomEffect: false,
             randomEffects: new Array('blind', 'clip', 'explode', 'fade', 'fold'),
             debug: false,
-            debugLevel: new Array('debug', 'info', 'warn', 'error')
+            debugLevel: new Array('debug', 'info', 'warn', 'error'),
+            unevenHeightsFix: false
         }, c.settings, options);
         // Effect options
         c.effectOptions = jQuery.extend({}, c.effectOptions, c.settings.effectOptions);
@@ -348,7 +349,7 @@ var AdvancedListRotatorClass = {
         // Stop rotationEngine
         c.stopRotationEngine(c);
         // Start rotationEngine as long as disableRotationEngine is false
-        if (! c.settings.disableRotationEngine) {
+        if (! c.settings.disableRotationEngine && c.totalItems > 1) {
             var rInt = c.getItemOption(c, 'rotationInterval', c.settings.rotationInterval);
             c.tId = setInterval(function() {
                 c.rotationEngine(c)
@@ -568,17 +569,7 @@ var AdvancedListRotatorClass = {
         }
     },
 
-    onBeforeShowItem: function(c) {
-    /*
-        switch (c.currentEffect) {
-            case 'blind':
-            case 'clip':
-            case 'explode':
-            case 'fold':
-                c.$listRotator.children().hide();
-                break;
-        }*/
-    },
+    onBeforeShowItem: function(c) {},
 
     onShowItem: function(c) {
         // Get current item
@@ -588,20 +579,12 @@ var AdvancedListRotatorClass = {
                 case 'slide':
                     c.runEffect(c, obj, false);
                     break;
-                /*
                 case 'fade':
-                    // Stop any ongoing animations
-                    obj.stop();
+                    if (c.settings.unevenHeightsFix) {
+                        c.$listRotator.children().addClass('alrInactive').removeClass('alrEffect');
+                        obj.removeClass('alrInactive');
+                    }
                     break;
-                case 'blind':
-                case 'clip':
-                case 'explode':
-                case 'fold':
-                    // Stop any ongoing animations
-                    obj.stop();
-                    // Show element
-                    obj.show();
-                    break;*/
             }
             // Add active class
             obj.addClass(c.settings.activeItemClass);
@@ -638,9 +621,9 @@ var AdvancedListRotatorClass = {
                         c.continueRotation(c);
                     }
 
-                    c.$listRotator.children().removeClass('alrActive');
+                    c.$listRotator.children().removeClass(c.settings.activeItemClass);
                     var obj = c.getCurrentItemObj(c);
-                    obj.removeClass('alrInactive').addClass('alrActive');
+                    obj.removeClass('alrInactive').addClass(c.settings.activeItemClass);
                     c.showNoAnimationContent(c, obj);
                 }
                 j++
@@ -661,6 +644,10 @@ var AdvancedListRotatorClass = {
     effectFade: function(c, e, runCallback) {
         var obj = c.getCurrentItemObj(c);
         c.hideNoAnimationContent(c, obj);
+
+        if (c.settings.unevenHeightsFix) {
+            obj.removeClass('alrInactive');
+        }
         obj.css('opacity', 0).addClass('alrEffect').show();
 
         obj.animate({
@@ -672,8 +659,8 @@ var AdvancedListRotatorClass = {
             if (runCallback) {
                 c.continueRotation(c);
             }
-            c.$listRotator.children().removeClass('alrActive');
-            obj.removeClass('alrEffect').addClass('alrActive');
+            c.$listRotator.children().removeClass(c.settings.activeItemClass);
+            obj.removeClass('alrEffect').addClass(c.settings.activeItemClass);
             c.showNoAnimationContent(c, obj);
         });
     },
