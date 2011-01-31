@@ -66,8 +66,10 @@ var AdvancedListRotatorClass = {
             startOnInteraction: false,
             helper: false,
             activeItemClass: 'alrActive',
+            inactiveItemClass: 'alrInactive',
             helperActiveItemClass: 'alrHelperActiveItem',
             helperInteraction: 'mouseover',
+            helperInteractionAnimate: false,
             startIndex: 0,
             currentItemElement: false,
             totalItemsElement: false,
@@ -291,8 +293,8 @@ var AdvancedListRotatorClass = {
         // Make sure jQuery UI is installed before running UI effects, fallback is no effect
         c.currentEffect = c.getItemEffect(c);
 
-        c.$listRotator.children().removeClass('alrInactive').removeClass('alrEffect');
-        c.$listRotator.children().addClass('alrInactive');
+        c.$listRotator.children().removeClass(c.settings.inactiveItemClass).removeClass('alrEffect');
+        c.$listRotator.children().addClass(c.settings.inactiveItemClass);
 
         switch (c.currentEffect) {
             case 'slide':
@@ -581,8 +583,16 @@ var AdvancedListRotatorClass = {
                     break;
                 case 'fade':
                     if (c.settings.unevenHeightsFix) {
-                        c.$listRotator.children().addClass('alrInactive').removeClass('alrEffect');
-                        obj.removeClass('alrInactive');
+                        c.$listRotator.children().addClass(c.settings.inactiveItemClass).removeClass('alrEffect');
+                        obj.removeClass(c.settings.inactiveItemClass);
+                    }
+                    if (c.settings.helperInteractionAnimate) {
+                        c.runEffect(c, obj, c.rotation);
+                    }
+                    break;
+                default:
+                    if (c.settings.helperInteractionAnimate) {
+                        c.runEffect(c, obj, c.rotation);
                     }
                     break;
             }
@@ -623,7 +633,7 @@ var AdvancedListRotatorClass = {
 
                     c.$listRotator.children().removeClass(c.settings.activeItemClass);
                     var obj = c.getCurrentItemObj(c);
-                    obj.removeClass('alrInactive').addClass(c.settings.activeItemClass);
+                    obj.removeClass(c.settings.inactiveItemClass).addClass(c.settings.activeItemClass);
                     c.showNoAnimationContent(c, obj);
                 }
                 j++
@@ -646,7 +656,7 @@ var AdvancedListRotatorClass = {
         c.hideNoAnimationContent(c, obj);
 
         if (c.settings.unevenHeightsFix) {
-            obj.removeClass('alrInactive');
+            obj.removeClass(c.settings.inactiveItemClass);
         }
         obj.css('opacity', 0).addClass('alrEffect').show();
 
