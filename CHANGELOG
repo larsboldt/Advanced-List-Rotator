@@ -1,3 +1,13 @@
+1.4 RC2
+New:
+- Added option to specify inactiveItemClass
+- Added option to specify helperInteractionAnimate
+- Added option to specify unevenHeightsFix to attempt to accomodate to different
+setups (set inactiveitemclass to display: none too)
+
+Fixes:
+- Changed activeItem class from 'alrActiveItem' to 'alrActive' according to css
+
 1.4 RC1
 New:
 - Added slice effect

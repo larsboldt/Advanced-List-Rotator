@@ -21,10 +21,10 @@ if (typeof Object.create !== 'function') {
 })(jQuery);
 
 /* Advanced List Rotator
- * Copyright (c) 2010 Lars Boldt (larsboldt.com)
+ * Copyright (c) 2010-2011 Lars Boldt (larsboldt.com)
  * E-mail: boldt.lars@gmail.com
- * Version: 1.4 RC1
- * Released: 16.10.2010
+ * Version: 1.4 RC2
+ * Released: 31.01.2011
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
