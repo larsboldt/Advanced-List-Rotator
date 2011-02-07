@@ -156,7 +156,7 @@ var AdvancedListRotatorClass = {
         if (jQuery(c.settings.helper).length > 0) {
             jQuery(c.settings.helper).children().each(function() {
                 jQuery(this).bind(c.settings.helperInteraction, function() {
-                    c.interaction(c, jQuery(this));
+                    c.interaction(c, jQuery(this), false);
                 });
                 jQuery(this).bind('mouseout', function() {
                     // Start rotationEngine
@@ -315,7 +315,7 @@ var AdvancedListRotatorClass = {
         }
     },
 
-    interaction: function(c, e) {
+    interaction: function(c, e, i) {
         // Set userInteraction true
         c.userInteraction = true;
         // Stop rotationEngine
@@ -328,7 +328,11 @@ var AdvancedListRotatorClass = {
         c.$listRotator.children().removeClass(c.settings.activeItemClass);
         jQuery(c.settings.helper).children().removeClass(c.settings.helperActiveItemClass);
         // Find position of current item
-        c.currentItem = e.index();
+        if (e !== false) {
+            c.currentItem = e.index();
+        } else {
+            c.currentItem = i;
+        }
         // Call onShowItem which handle how an item is shown based on effect in use
         c.onShowItem(c);
         // Set active helper class
@@ -437,16 +441,23 @@ var AdvancedListRotatorClass = {
     },
 
     moveToNextItem: function(c) {
+        /*
+        c.stopCurrentItemAnimation(c);
         // Move can only be done when animation isn't running
         if (! c.animationRunning) {
             // Make sure we intercept any ongoing animations with the userInteraction flag
             c.userInteraction = true;
             // Call the next item, rotationEngine will automatically figure out which item is next
             c.rotationEngine(c);
-        }
+        }*/
+        var nextItem = c.currentItem+1;
+        nextItem = (nextItem > c.totalItems-1) ? 0 : nextItem;
+        c.interaction(c, false, nextItem);
     },
 
     moveToPreviousItem: function(c) {
+        /*
+        c.stopCurrentItemAnimation(c);
         // Move can only be done when animation isn't running
         if (! c.animationRunning) {
             // Make sure we intercept any ongoing animations with the userInteraction flag
@@ -454,7 +465,16 @@ var AdvancedListRotatorClass = {
             // Setting calculate next item to false will tell rotationEngine to calculate the previous item instead
             c.calculateNextItem = false;
             c.rotationEngine(c);
-        }
+        }*/
+        var previousItem = c.currentItem-1;
+        previousItem = (previousItem < 0) ? c.totalItems-1 : previousItem;
+        c.interaction(c, false, previousItem);
+    },
+
+    stopCurrentItemAnimation: function(c) {
+        var obj = c.getCurrentItemObj(c);
+        obj.stop(true, true);
+        c.animationRunning = false;
     },
 
     getCurrentItemObj: function(c) {
